@@ -1,6 +1,9 @@
 import pygame
 from pygame.locals import *
 
+from camera import Camera
+from level import Level
+
 # Constants
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -14,11 +17,8 @@ class Player:
     def __init__(self, x, y, speed):
         self.sprite_sheet = pygame.image.load('sprites/walk.png').convert_alpha()
         self.frames = {
-            # "down": self.load_frames(0, 3),
             "down": self.load_frames(2, 3),
-            # "up": self.load_frames(1, 3),
             "up": self.load_frames(0, 3),
-            # "left": self.load_frames(2, 3),
             "left": self.load_frames(1, 3),
             "right": self.load_frames(3, 3)
         }
@@ -29,7 +29,15 @@ class Player:
         self.rect = self.image.get_rect(center=(x, y))
         self.speed = speed
         self.moving = False
+        self.observers = []
 
+    # Observer pattern functions
+    def add_observer(self, observer):
+        self.observers.append(observer)
+    def notify_observers(self):
+        for observer in self.observers:
+            observer.update(self)
+    
     def load_frames(self, row, frame_count):
         frame_width = self.sprite_sheet.get_width() // 8
         frame_height = self.sprite_sheet.get_height() // 4
@@ -66,7 +74,7 @@ class Player:
         # Update position with boundary checking
         self.rect.x = max(0, min(self.rect.x + dx, screen_width - self.rect.width))
         self.rect.y = max(0, min(self.rect.y + dy, screen_height - self.rect.height))
-
+    
         # Update direction based on movement
         if dx != 0 or dy != 0:
             self.moving = True
@@ -81,8 +89,8 @@ class Player:
 
         self.animate()
 
-    def draw(self, surface):
-        surface.blit(self.image, self.rect)
+    def draw(self, surface, camera):
+        surface.blit(self.image, camera.apply(self))
 
 class Game:
     def __init__(self):
@@ -91,11 +99,14 @@ class Game:
         pygame.display.set_caption("Adventure Game")
         self.clock = pygame.time.Clock()
         self.running = True
+        self.level = Level("./levels/level1.ldtk", "./levels/suelos.png")
+        self.camera = Camera(self.level.width, self.level.height, SCREEN_WIDTH, SCREEN_HEIGHT)
         self.player = Player(
             x=SCREEN_WIDTH // 2,
             y=SCREEN_HEIGHT // 2,
             speed=PLAYER_SPEED
         )
+        self.player.add_observer(self.camera)
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -104,11 +115,13 @@ class Game:
 
     def update(self):
         keys_pressed = pygame.key.get_pressed()
-        self.player.move(keys_pressed, SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.player.move(keys_pressed, self.level.width, self.level.height)
+        self.player.notify_observers()
 
     def render(self):
         self.screen.fill(COLORS["grass"])
-        self.player.draw(self.screen)
+        self.level.draw(self.screen, self.camera)
+        self.player.draw(self.screen, self.camera)
         pygame.display.flip()
 
     def run(self):
