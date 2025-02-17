@@ -1,0 +1,79 @@
+{
+  "colors": {
+    "name": "Liberated Palette",
+    "authors": [
+      "Eliza Wyatt (DeathsDarling)"
+    ],
+    "urls": [
+      "https://github.com/ElizaWy/LPC/wiki/Style-Guide#color-palette"
+    ],
+    "licenses": [
+      "OGA-BY 3.0"
+    ],
+    "notes": [
+      "Original palette made for the LPC set, by Eliza Wyatt."
+    ]
+  },
+  "anatomy.body.teen": {
+    "notes": [
+      "2023-12 [napsio]: minimized colors to 6 for each material and fixed broken colors"
+    ],
+    "authors": [
+      "napsio",
+      "bluecarrot16",
+      "Evert",
+      "TheraHedwig",
+      "Benjamin K. Smith (BenCreating)",
+      "MuffinElZangano",
+      "Durrani",
+      "Pierre Vigier (pvigier)",
+      "Eliza Wyatt (ElizaWy)",
+      "Matthew Krohn (makrohn)",
+      "Johannes Sjölund (wulax)",
+      "Stephen Challener (Redshrike)"
+    ],
+    "licenses": [
+      "CC-BY-SA 3.0",
+      "GPL 3.0"
+    ],
+    "urls": [
+      "https://opengameart.org/content/lpc-jump-expanded",
+      "https://opengameart.org/content/lpc-revised-character-basics",
+      "https://opengameart.org/content/lpc-teen-unisex-base-clothes",
+      "https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles",
+      "https://opengameart.org/content/lpc-ladies",
+      "https://opengameart.org/content/lpc-be-seated",
+      "https://opengameart.org/content/lpc-runcycle-for-male-muscular-and-pregnant-character-bases-with-modular-heads",
+      "https://opengameart.org/content/lpc-medieval-fantasy-character-sprites",
+      "https://opengameart.org/content/lpc-character-bases",
+      "https://gitlab.com/vagabondgame/lpc-characters",
+      "https://opengameart.org/content/lpc-male-jumping-animation-by-durrani",
+      "https://opengameart.org/content/lpc-runcycle-and-diagonal-walkcycle"
+    ],
+    "name": "Teen"
+  },
+  "anatomy.head.alien": {
+    "notes": [
+      "based on lizard originally by Nila122",
+      "modified by BenCreating",
+      "further edited by bluecarrot16. Nila122 gave blanket permission to MedicineStorm to use Nila122's LPC assets under OGA-BY 3.0 (where original or derived only from other works under OGA-BY).",
+      "2023-12 [napsio]: minimized colors to 6 for each material and fixed broken colors"
+    ],
+    "authors": [
+      "napsio",
+      "bluecarrot16",
+      "Benjamin K. Smith (BenCreating)",
+      "Nila122"
+    ],
+    "licenses": [
+      "OGA-BY 3.0",
+      "CC-BY-SA 3.0",
+      "GPL 3.0"
+    ],
+    "urls": [
+      "https://opengameart.org/content/lpc-character-bases",
+      "https://opengameart.org/content/drakes-and-lizardfolk"
+    ],
+    "name": "Alien"
+  }
+}
