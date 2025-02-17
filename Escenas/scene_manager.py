@@ -29,3 +29,15 @@ class SceneManager:
 
             self.current_scene.update()
             self.current_scene.render()
+
+    def handle_event(self, event):
+        if self.current_scene:
+            self.current_scene.handle_event(event)
+
+    def update(self):
+        if self.current_scene:
+            self.current_scene.update()
+
+    def render(self):
+        if self.current_scene:
+            self.current_scene.render()

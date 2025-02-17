@@ -4,9 +4,8 @@ import sys
 from Escenas.scene_abs import SceneAbs
 
 
-class MainMenu(SceneAbs):
+class MainMenu:
     def __init__(self, screen, scene_manager):
-        super().__init__(screen, scene_manager)
         self.screen = screen
         self.scene_manager = scene_manager
         self.font = pygame.font.Font(None, 36)
@@ -14,11 +13,7 @@ class MainMenu(SceneAbs):
         self.title_text = self.font.render("Ñembi Survivor", True, (255, 255, 255))
         self.title_rect = self.title_text.get_rect(center=(screen.get_width() // 2, 100))
 
-        self.menu_options = [
-            "Jugar",
-            "Ajustes",
-            "Salir"
-        ]
+        self.menu_options = ["Jugar", "Ajustes", "Salir"]
         self.selected_option = 0
 
     def setup(self):
@@ -32,7 +27,6 @@ class MainMenu(SceneAbs):
 
     def render(self):
         self.screen.fill((0, 0, 0))
-
         self.screen.blit(self.title_text, self.title_rect)
 
         for i, option in enumerate(self.menu_options):
@@ -51,14 +45,11 @@ class MainMenu(SceneAbs):
                 self.handle_selection()
 
     def handle_selection(self):
-
-        if self.selected_option == 0:
-            print("Jugar")
-            self.scene_manager.switch_scene("NewGameScene")
-        elif self.selected_option == 1:
-            print("Ajustes")
-            self.scene_manager.switch_scene("SettingsScene")
-        elif self.selected_option == 2:
-            print("Salir")
-            pygame.quit()
-            sys.exit()
+        match self.selected_option:
+            case 0:
+                self.scene_manager.switch_scene("NewGameScene")
+            case 1:
+                self.scene_manager.switch_scene("SettingsScene")
+            case 2:
+                pygame.quit()
+                sys.exit()
