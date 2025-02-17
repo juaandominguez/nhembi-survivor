@@ -2,9 +2,14 @@ import pygame
 import random
 from pygame.locals import *
 
+from Escenas.main_menu import MainMenu
+from Escenas.scene_manager import SceneManager
+from Escenas.settings_menu import SettingsScene
+from Escenas.new_game_scene import NewGameScene
+
 from camera import Camera
 from level import Level
-from enemy import Enemy  # Importar la nueva clase Enemy
+from enemy import Enemy
 
 # Constants
 SCREEN_WIDTH = 800
@@ -165,13 +170,27 @@ class Game:
         pygame.display.flip()
 
     def run(self):
+        scene_manager.run_current_scene()
         while self.running:
             self.handle_events()
             self.update()
             self.render()
             self.clock.tick(60)
+        pg.display.update()
         pygame.quit()
+
+# Escenas
+scene_manager = SceneManager(screen)
+main_menu_scene = MainMenu(screen, scene_manager)
+scene_manager.add_scene("MainMenuScene", main_menu_scene)
+settings_scene = SettingsScene(screen, scene_manager)
+scene_manager.add_scene("SettingsScene", settings_scene)
+game_scene = NewGameScene(screen, scene_manager)
+scene_manager.add_scene("NewGameScene", game_scene)
+scene_manager.switch_scene("MainMenuScene")
+
 
 if __name__ == "__main__":
     game = Game()
     game.run()
+
