@@ -28,7 +28,7 @@ class NewGameScene(SceneAbs):
 
     def setup(self):
         """Inicializa los recursos de la escena"""
-        self.level = Level("./levels/level1.ldtk", "./levels/suelos.png")
+        self.level = Level("./levels/pasilloFIC.ldtk", "./levels/suelos_paredes.png")
         self.camera = Camera(self.level.width, self.level.height, SCREEN_WIDTH, SCREEN_HEIGHT)
 
         # Inicializar jugador
@@ -40,7 +40,7 @@ class NewGameScene(SceneAbs):
         self.player.add_observer(self.camera)
 
         # Generar enemigos
-        self.spawn_enemies(10)
+        self.spawn_enemies(0)
 
     def cleanup(self):
         """Limpia los recursos de la escena"""
