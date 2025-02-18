@@ -7,7 +7,7 @@ ANIMATION_INTERVAL = 200  # ms between frames
 
 class Player:
     def __init__(self, x, y, speed):
-        self.sprite_sheet = pygame.image.load('sprites/walk.png').convert_alpha()
+        self.sprite_sheet = pygame.image.load('sprites/thiagic/walk.png').convert_alpha()
         self.frames = {
             "down": self.load_frames(2, 3),
             "up": self.load_frames(0, 3),
