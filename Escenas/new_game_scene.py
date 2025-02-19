@@ -25,16 +25,17 @@ class NewGameScene(SceneAbs):
         self.camera = None
         self.player = None
         self.enemies = []
+        self.collision_tiles = []
 
     def setup(self):
         """Inicializa los recursos de la escena"""
-        self.level = Level("./levels/pasilloFIC.ldtk", "./levels/suelos_paredes.png")
+        self.level = Level("./levels/pasilloFIC.ldtk")
         self.camera = Camera(self.level.width, self.level.height, SCREEN_WIDTH, SCREEN_HEIGHT)
-
+        self.collision_tiles = self.level.get_level_collisions()
         # Inicializar jugador
         self.player = Player(
-            x=SCREEN_WIDTH // 2,
-            y=SCREEN_HEIGHT // 2,
+            x=0,
+            y=self.level.height// 2,
             speed=PLAYER_SPEED
         )
         self.player.add_observer(self.camera)
@@ -62,12 +63,12 @@ class NewGameScene(SceneAbs):
 
         # Actualizar jugador
         if self.player:
-            self.player.move(keys_pressed, self.level.width, self.level.height)
+            self.player.move(keys_pressed, self.level.width, self.level.height, self.collision_tiles)
             self.player.notify_observers()
 
         # Actualizar enemigos
         for enemy in self.enemies:
-            enemy.update(self.player)
+            enemy.update(self.player, self.collision_tiles)
 
     def render(self):
         """Renderiza la escena"""
