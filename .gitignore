@@ -27,3 +27,5 @@ dist/
 
 # Ignorar archivos de LDtk innecesarios (si usas archivos de backup)
 *.ldtk-backup
+
+Escenas/__pycache__/*
