@@ -1,5 +1,4 @@
 import pygame
-import random
 from pygame.locals import *
 
 ANIMATION_INTERVAL = 200  # ms between frames
@@ -121,7 +120,7 @@ class Player:
             self.current_frame = 0
         self.image = self.frames[self.direction][self.current_frame]
 
-    def move(self, keys_pressed, screen_width, screen_height):
+    def move(self, keys_pressed, screen_width, screen_height, collision_tiles):
         dx, dy = 0, 0
         self.moving = False
 
@@ -147,6 +146,19 @@ class Player:
             else:
                 self.direction = "right" if dx > 0 else "left"
 
+        # Verificar colisiones antes de mover
+        new_x = self.rect.centerx + dx
+        new_y = self.rect.centery + dy
+        # Crear un margen para el rectángulo de colisión si es necesario
+        margin = 60  # Ajusta este margen si es necesario
+        character_rect = pygame.Rect(new_x - self.rect.width // 4 - 5, new_y - self.rect.height // 13, self.rect.width - margin, self.rect.height - margin)
+        # Comprobar si la nueva posición colisiona con alguna celda de colisión
+        for tile in collision_tiles:
+            # Comprobar si el rectángulo de la nueva posición colisiona con alguna celda de colisión
+            if tile.colliderect(character_rect):
+                self.animate()
+                # Si hay colisión, no mover
+                return
         # Actualizar posición con límites de pantalla
         self.rect.x = max(0, min(self.rect.x + dx, screen_width - self.rect.width))
         self.rect.y = max(0, min(self.rect.y + dy, screen_height - self.rect.height))
