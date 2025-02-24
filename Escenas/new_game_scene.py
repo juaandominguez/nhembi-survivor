@@ -28,22 +28,23 @@ class NewGameScene(SceneAbs):
         self.player = None
         self.enemies = []
         self.paused = False
+        self.collision_tiles = []
 
     def setup(self):
 
-        self.level = Level("./levels/level1.ldtk", "./levels/suelos.png")
+        self.level = Level("./levels/pasilloFIC.ldtk")
         self.camera = Camera(self.level.width, self.level.height, SCREEN_WIDTH, SCREEN_HEIGHT)
-
+        self.collision_tiles = self.level.get_level_collisions()
         # Inicializar jugador
         self.player = Player(
-            x=SCREEN_WIDTH // 2,
-            y=SCREEN_HEIGHT // 2,
+            x=0,
+            y=self.level.height// 2,
             speed=PLAYER_SPEED
         )
         self.player.add_observer(self.camera)
 
         # Generar enemigos
-        self.spawn_enemies(10)
+        self.spawn_enemies(0)
 
     def cleanup(self):
         """Limpia los recursos de la escena"""
@@ -68,12 +69,21 @@ class NewGameScene(SceneAbs):
 
         # Actualizar jugador
         if self.player:
-            self.player.move(keys_pressed, self.level.width, self.level.height)
+            self.player.move(keys_pressed, self.level.width, self.level.height, self.collision_tiles)
             self.player.notify_observers()
 
         # Actualizar enemigos
         for enemy in self.enemies:
-            enemy.update(self.player)
+            enemy.update(self.player, self.collision_tiles)
+
+        if self.player.attacking:
+            self.check_attack_collisions()
+
+    def check_attack_collisions(self):
+        """Verifica colisiones entre el ataque y los enemigos"""
+        for enemy in self.enemies[:]:  # Iteramos sobre copia para poder eliminar
+            if self.player.attack_rect.colliderect(enemy.rect):
+                self.enemies.remove(enemy)  # Eliminar enemigo
 
     def render(self):
         """Renderiza la escena"""

@@ -38,12 +38,26 @@ class Enemy:
 
         return frames
 
-    def move_towards(self, player):
+    def move_towards(self, player, collision_tiles):
         """
         Mueve al enemigo hacia el jugador con su velocidad configurada.
         """
         dx, dy = player.rect.centerx - self.rect.centerx, player.rect.centery - self.rect.centery
         distance = max(1, (dx ** 2 + dy ** 2) ** 0.5)
+        
+        # Verificar colisiones antes de mover
+        new_x = self.rect.centerx + (dx / distance) * self.speed
+        new_y = self.rect.centery + (dy / distance) * self.speed
+        # Crear un margen para el rectángulo de colisión si es necesario
+        margin = 60  # Ajusta este margen si es necesario
+        character_rect = pygame.Rect(new_x - self.rect.width // 4, new_y - self.rect.height // 13, self.rect.width - margin, self.rect.height - margin)
+        # Comprobar si la nueva posición colisiona con alguna celda de colisión
+        for tile in collision_tiles:
+            # Comprobar si el rectángulo de la nueva posición colisiona con alguna celda de colisión
+            if tile.colliderect(character_rect):
+                self.animate()
+                # Si hay colisión, no mover
+                return
 
         self.rect.x += (dx / distance) * self.speed
         self.rect.y += (dy / distance) * self.speed
@@ -64,15 +78,25 @@ class Enemy:
             self.current_frame = (self.current_frame + 1) % len(self.frames[self.direction])
             self.image = self.frames[self.direction][self.current_frame]
 
-    def update(self, player):
+    def update(self, player, collision_tiles):
         """
         Actualiza la posición y animación del enemigo.
         """
-        self.move_towards(player)
+        self.move_towards(player, collision_tiles)
         self.animate()
 
     def draw(self, surface, camera):
         """
-        Dibuja el enemigo en pantalla ajustado a la cámara.
+        Dibuja el enemigo en pantalla ajustado a la cámara y su rectángulo relleno de azul transparente.
         """
         surface.blit(self.image, camera.apply(self))
+        
+        # Crear una superficie azul transparente
+        rect_color = (0, 0, 255, 100)  # Azul con transparencia (100 es el valor alpha)
+        blue_surface = pygame.Surface(self.rect.size, pygame.SRCALPHA)  # Superficie del mismo tamaño que el rect
+        blue_surface.fill(rect_color)  # Rellenar la superficie con el color azul transparente
+        
+        # Dibujar el rectángulo transparente encima del enemigo
+        surface.blit(blue_surface, camera.apply(self).topleft)
+
+
