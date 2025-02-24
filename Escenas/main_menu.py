@@ -3,26 +3,49 @@ import sys
 
 from Escenas.scene_abs import SceneAbs
 
-
-class MainMenu:
+class MainMenu(SceneAbs):
     def __init__(self, screen, scene_manager):
-        self.screen = screen
-        self.scene_manager = scene_manager
+        super().__init__(screen, scene_manager)
         self.font = pygame.font.Font(None, 36)
-
-        self.title_text = self.font.render("Ñembi Survivor", True, (255, 255, 255))
-        self.title_rect = self.title_text.get_rect(center=(screen.get_width() // 2, 100))
-
+        self.title_text = None
+        self.title_rect = None
         self.menu_options = ["Jugar", "Ajustes", "Salir"]
         self.selected_option = 0
 
     def setup(self):
-        pass
+        """Inicialización de recursos"""
+        self.title_text = self.font.render("Ñembi Survivor", True, (255, 255, 255))
+        self.title_rect = self.title_text.get_rect(
+            center=(self.screen.get_width() // 2, 100)
+        )
 
     def cleanup(self):
+        """Limpieza de recursos (no necesario en este caso)"""
         pass
 
+    def handle_event(self, event):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                self.selected_option = (self.selected_option - 1) % len(self.menu_options)
+            elif event.key == pygame.K_DOWN:
+                self.selected_option = (self.selected_option + 1) % len(self.menu_options)
+            elif event.key == pygame.K_RETURN:
+                self.handle_selection()
+            elif event.key == pygame.K_ESCAPE:
+                pygame.quit()
+                sys.exit()
+
+    def handle_selection(self):
+        if self.selected_option == 0:  # Jugar
+            self.scene_manager.push_scene("game")
+        elif self.selected_option == 1:  # Ajustes
+            self.scene_manager.push_scene("settings")
+        elif self.selected_option == 2:  # Salir
+            pygame.quit()
+            sys.exit()
+
     def update(self):
+        """Actualización lógica (no necesaria en menú estático)"""
         pass
 
     def render(self):
@@ -35,21 +58,10 @@ class MainMenu:
             rect = text.get_rect(center=(self.screen.get_width() // 2, 200 + i * 50))
             self.screen.blit(text, rect)
 
-    def handle_event(self, event):
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
-                self.selected_option = (self.selected_option - 1) % len(self.menu_options)
-            elif event.key == pygame.K_DOWN:
-                self.selected_option = (self.selected_option + 1) % len(self.menu_options)
-            elif event.key == pygame.K_RETURN:
-                self.handle_selection()
+    def pause(self):
+        """Pausa el menú (no necesario)"""
+        pass
 
-    def handle_selection(self):
-        match self.selected_option:
-            case 0:
-                self.scene_manager.switch_scene("NewGameScene")
-            case 1:
-                self.scene_manager.switch_scene("SettingsScene")
-            case 2:
-                pygame.quit()
-                sys.exit()
+    def resume(self):
+        """Reanuda el menú (no necesario)"""
+        pass

@@ -1,5 +1,4 @@
 import pygame
-import random
 from pygame.locals import *
 
 ANIMATION_INTERVAL = 200  # ms between frames

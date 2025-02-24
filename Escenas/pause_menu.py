@@ -1,58 +1,85 @@
 import pygame
+import sys
+from Escenas.scene_abs import SceneAbs
+from resource_manager import ResourceManager
 
-class SettingsScene:
+
+class PauseMenu(SceneAbs):
     def __init__(self, screen, scene_manager):
         super().__init__(screen, scene_manager)
-        self.screen = screen
-        self.scene_manager = scene_manager
-        self.font = pygame.font.Font(None, 36)
+        self.resources = ResourceManager()
+        self.background = None
+        self._setup_fonts()
 
-        self.title_text = self.font.render("Settings", True, (255, 255, 255))
-        self.title_rect = self.title_text.get_rect(center=(screen.get_width() // 2, 100))
+        self.options = ["Continuar", "Volver al menú", "Salir"]
+        self.selected = 0
 
-        self.menu_options = [
-            "Volumen de música", # barrita
-            "Volumen de Fx", # barrita
-            "Resolución", # desplegable
-            "Back" # boton
-        ]
+    def _setup_fonts(self):
+        self.title_font = self.resources.get_font(None, 48)
+        self.option_font = self.resources.get_font(None, 36)
 
-        self.selected_option = 0
+    def capture_background(self, background_surface):
+        self.background = background_surface.copy()
 
     def setup(self):
         pass
-
     def cleanup(self):
-        pass
+        self.background = None
 
     def update(self):
         pass
 
     def render(self):
-        self.screen.fill((0, 0, 0))
-        self.screen.blit(self.title_text, self.title_rect)
+        if self.background:
+            self.screen.blit(self.background, (0, 0))
 
-        for i, option in enumerate(self.menu_options):
-            color = (255, 0, 0) if i == self.selected_option else (150, 150, 150)
-            text = self.font.render(option, True, color)
-            rect = text.get_rect(center=(self.screen.get_width() // 2, 200 + i * 50))
-            self.screen.blit(text, rect)
+        # Capa semitransparente
+        overlay = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 180))
+        self.screen.blit(overlay, (0, 0))
+
+        # Título
+        title = self.title_font.render("PAUSA", True, (255, 255, 255))
+        title_rect = title.get_rect(center=(self.screen.get_width() // 2, 200))
+        self.screen.blit(title, title_rect)
+
+        # Opciones
+        for i, opt in enumerate(self.options):
+            color = (255, 0, 0) if i == self.selected else (200, 200, 200)
+            text = self.option_font.render(opt, True, color)
+            text_rect = text.get_rect(center=(self.screen.get_width() // 2, 300 + i * 60))
+            self.screen.blit(text, text_rect)
 
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
-                self.selected_option = (self.selected_option - 1) % len(self.menu_options)
+                self.selected = (self.selected - 1) % len(self.options)
             elif event.key == pygame.K_DOWN:
-                self.selected_option = (self.selected_option + 1) % len(self.menu_options)
+                self.selected = (self.selected + 1) % len(self.options)
             elif event.key == pygame.K_RETURN:
-                self.handle_selection()
+                self._handle_selection()
+            elif event.key == pygame.K_ESCAPE:
+                self.scene_manager.pop_scene()
 
+    def _handle_selection(self):
+        if self.selected == 0:
+            self.scene_manager.pop_scene()
+        elif self.selected == 1:
+            self._return_to_main_menu()
+        elif self.selected == 2:
+            pygame.quit()
+            sys.exit()
 
-    def handle_selection(self):
-        if self.selected_option == 3:
-            self.scene_manager.switch_scene("NewGameScene")
+    def _return_to_main_menu(self):
+        self.scene_manager.pop_scene()
+        old_key = self.scene_manager.pop_scene()
+        self.scene_manager.delete_scene_instance(old_key)
+        while len(self.scene_manager.scene_stack) > 0:
+            self.scene_manager.pop_scene()
+        self.scene_manager.push_scene("main_menu")
+
+    def pause(self):
         pass
 
-    def handle_mouse_event(self, event):
-        # Add logic to handle mouse events for sliders and dropdowns
+    def resume(self):
         pass

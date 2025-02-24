@@ -1,7 +1,7 @@
 import pygame
 import random
 from pygame.locals import *
-
+from resource_manager import ResourceManager
 from Escenas.scene_abs import SceneAbs
 from camera import Camera
 from level import Level
@@ -20,14 +20,17 @@ COLORS = {
 class NewGameScene(SceneAbs):
     def __init__(self, screen, scene_manager):
         super().__init__(screen, scene_manager)
+        self.resources = ResourceManager()
+        self._paused = False
         self.running = True
         self.level = None
         self.camera = None
         self.player = None
         self.enemies = []
+        self.paused = False
 
     def setup(self):
-        """Inicializa los recursos de la escena"""
+
         self.level = Level("./levels/level1.ldtk", "./levels/suelos.png")
         self.camera = Camera(self.level.width, self.level.height, SCREEN_WIDTH, SCREEN_HEIGHT)
 
@@ -45,6 +48,7 @@ class NewGameScene(SceneAbs):
     def cleanup(self):
         """Limpia los recursos de la escena"""
         self.enemies.clear()
+        self._paused = True
         self.player = None
         self.camera = None
         self.level = None
@@ -52,9 +56,9 @@ class NewGameScene(SceneAbs):
     def handle_event(self, event):
         """Maneja eventos específicos de la escena"""
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                # Volver al menú principal
-                self.scene_manager.switch_scene("MainMenuScene")
+            if event.key == pygame.K_p:
+                self.pause()
+
 
     def update(self):
         """Actualiza la lógica del juego"""
@@ -108,3 +112,17 @@ class NewGameScene(SceneAbs):
     def handle_selection(self):
         """Maneja la lógica de selección (requerido por SceneAbs)"""
         print("Selection handled in NewGameScene")
+
+    def pause(self):
+        print("Juego pausado")
+        self._paused = True
+        pygame.mixer.music.pause()
+        self.scene_manager.push_scene("pause")
+        self.scene_manager.current_scene().capture_background(self.screen)
+
+    def resume(self):
+        print("Juego reanudado")
+        self._paused = False
+        pygame.mixer.music.unpause()
+
+        # Reanudar música/temporizadores si es necesario
