@@ -1,7 +1,7 @@
 import pygame
 import random
 from pygame.locals import *
-
+from resource_manager import ResourceManager
 from Escenas.scene_abs import SceneAbs
 from camera import Camera
 from level import Level
@@ -20,31 +20,36 @@ COLORS = {
 class NewGameScene(SceneAbs):
     def __init__(self, screen, scene_manager):
         super().__init__(screen, scene_manager)
+        self.resources = ResourceManager()
+        self._paused = False
         self.running = True
         self.level = None
         self.camera = None
         self.player = None
         self.enemies = []
+        self.paused = False
+        self.collision_tiles = []
 
     def setup(self):
-        """Inicializa los recursos de la escena"""
-        self.level = Level("./levels/level1.ldtk", "./levels/suelos.png")
-        self.camera = Camera(self.level.width, self.level.height, SCREEN_WIDTH, SCREEN_HEIGHT)
 
+        self.level = Level("./levels/pasilloFIC.ldtk")
+        self.camera = Camera(self.level.width, self.level.height, SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.collision_tiles = self.level.get_level_collisions()
         # Inicializar jugador
         self.player = Player(
-            x=SCREEN_WIDTH // 2,
-            y=SCREEN_HEIGHT // 2,
+            x=0,
+            y=self.level.height// 2,
             speed=PLAYER_SPEED
         )
         self.player.add_observer(self.camera)
 
         # Generar enemigos
-        self.spawn_enemies(10)
+        self.spawn_enemies(0)
 
     def cleanup(self):
         """Limpia los recursos de la escena"""
         self.enemies.clear()
+        self._paused = True
         self.player = None
         self.camera = None
         self.level = None
@@ -52,9 +57,9 @@ class NewGameScene(SceneAbs):
     def handle_event(self, event):
         """Maneja eventos específicos de la escena"""
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                # Volver al menú principal
-                self.scene_manager.switch_scene("MainMenuScene")
+            if event.key == pygame.K_p:
+                self.pause()
+
 
     def update(self):
         """Actualiza la lógica del juego"""
@@ -62,12 +67,21 @@ class NewGameScene(SceneAbs):
 
         # Actualizar jugador
         if self.player:
-            self.player.move(keys_pressed, self.level.width, self.level.height)
+            self.player.move(keys_pressed, self.level.width, self.level.height, self.collision_tiles)
             self.player.notify_observers()
 
         # Actualizar enemigos
         for enemy in self.enemies:
-            enemy.update(self.player)
+            enemy.update(self.player, self.collision_tiles)
+
+        if self.player.attacking:
+            self.check_attack_collisions()
+
+    def check_attack_collisions(self):
+        """Verifica colisiones entre el ataque y los enemigos"""
+        for enemy in self.enemies[:]:  # Iteramos sobre copia para poder eliminar
+            if self.player.attack_rect.colliderect(enemy.rect):
+                self.enemies.remove(enemy)  # Eliminar enemigo
 
     def render(self):
         """Renderiza la escena"""
@@ -108,3 +122,17 @@ class NewGameScene(SceneAbs):
     def handle_selection(self):
         """Maneja la lógica de selección (requerido por SceneAbs)"""
         print("Selection handled in NewGameScene")
+
+    def pause(self):
+        print("Juego pausado")
+        self._paused = True
+        pygame.mixer.music.pause()
+        self.scene_manager.push_scene("pause")
+        self.scene_manager.current_scene().capture_background(self.screen)
+
+    def resume(self):
+        print("Juego reanudado")
+        self._paused = False
+        pygame.mixer.music.unpause()
+
+        # Reanudar música/temporizadores si es necesario
