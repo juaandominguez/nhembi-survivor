@@ -1,6 +1,4 @@
 import pygame
-import random
-from pygame.locals import *
 
 from Escenas.main_menu import MainMenu
 from Escenas.scene_manager import SceneManager
@@ -8,10 +6,7 @@ from Escenas.settings_menu import SettingsScene
 from Escenas.new_game_scene import NewGameScene
 from Escenas.pause_menu import PauseMenu
 from resource_manager import ResourceManager
-from camera import Camera
-from level import Level
-from enemy import Enemy
-from player import Player
+
 
 # Constants
 SCREEN_WIDTH = 800
