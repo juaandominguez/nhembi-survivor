@@ -57,6 +57,8 @@ class NewGameScene(SceneAbs):
         """Maneja eventos específicos de la escena"""
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_p:
+                self.scene_manager.push_scene("pause")
+                self.scene_manager.current_scene().capture_background(self.screen)
                 self.pause()
 
 
@@ -117,8 +119,7 @@ class NewGameScene(SceneAbs):
         print("Juego pausado")
         self._paused = True
         pygame.mixer.music.pause()
-        self.scene_manager.push_scene("pause")
-        self.scene_manager.current_scene().capture_background(self.screen)
+
 
     def resume(self):
         print("Juego reanudado")
