@@ -87,6 +87,16 @@ class Enemy:
 
     def draw(self, surface, camera):
         """
-        Dibuja el enemigo en pantalla ajustado a la cámara.
+        Dibuja el enemigo en pantalla ajustado a la cámara y su rectángulo relleno de azul transparente.
         """
         surface.blit(self.image, camera.apply(self))
+        
+        # Crear una superficie azul transparente
+        rect_color = (0, 0, 255, 100)  # Azul con transparencia (100 es el valor alpha)
+        blue_surface = pygame.Surface(self.rect.size, pygame.SRCALPHA)  # Superficie del mismo tamaño que el rect
+        blue_surface.fill(rect_color)  # Rellenar la superficie con el color azul transparente
+        
+        # Dibujar el rectángulo transparente encima del enemigo
+        surface.blit(blue_surface, camera.apply(self).topleft)
+
+

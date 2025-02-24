@@ -74,6 +74,15 @@ class NewGameScene(SceneAbs):
         for enemy in self.enemies:
             enemy.update(self.player, self.collision_tiles)
 
+        if self.player.attacking:
+            self.check_attack_collisions()
+
+    def check_attack_collisions(self):
+        """Verifica colisiones entre el ataque y los enemigos"""
+        for enemy in self.enemies[:]:  # Iteramos sobre copia para poder eliminar
+            if self.player.attack_rect.colliderect(enemy.rect):
+                self.enemies.remove(enemy)  # Eliminar enemigo
+
     def render(self):
         """Renderiza la escena"""
         if not self.level or not self.player:
