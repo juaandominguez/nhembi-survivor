@@ -1,5 +1,4 @@
-import pygame
-
+import pygame, os
 
 class ResourceManager:
     _instance = None
@@ -27,3 +26,21 @@ class ResourceManager:
         if path not in self._sounds:
             self._sounds[path] = pygame.mixer.Sound(path)
         return self._sounds[path]
+    
+    @classmethod
+    def CargarArchivoCoordenadas(cls, nombre):
+        # Si el nombre de archivo está entre los recursos ya cargados
+        if nombre in cls.recursos:
+            # Se devuelve ese recurso
+            return cls.recursos[nombre]
+        # Si no ha sido cargado anteriormente
+        else:
+            # Se carga el recurso indicando el nombre de su carpeta
+            fullname = os.path.join('sprites', nombre)
+            pfile=open(fullname,'r')
+            datos=pfile.read()
+            pfile.close()
+            # Se almacena
+            cls.recursos[nombre] = datos
+            # Se devuelve
+            return datos
