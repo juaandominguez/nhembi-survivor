@@ -23,7 +23,8 @@ DOWN = 4
 
 
 # Speed from different characters
-SPEED_PLAYER = 0.2 # pixels/ms
+SPEED_MULTIPLIER = 0.2
+SPEED_PLAYER = (0.1,0.1)
 ANIMATION_PLAYER_DELAY = 5 # updates between frames, should be different for each posture
 
 # -------------------------------------------------
@@ -121,7 +122,7 @@ class Character(MySprite):
         self.movement = movement
 
 
-    def updatePosture(self):
+    def updatePosture(self, action = 'walk'):
         self.movementDelay += 1
         
         if self.movementDelay >= self.animationDelay:
@@ -132,7 +133,7 @@ class Character(MySprite):
             if self.numPosture >= len(self.coordinatesFile[self.movement]):
                 self.numPosture = 0
         
-        self.image = self.spriteCharacter['walk'].image.subsurface(self.coordinatesFile[self.movement][self.numPosture][0])
+        self.image = self.spriteCharacter[action].image.subsurface(self.coordinatesFile[self.movement][self.numPosture][0])
 
 
 
@@ -140,13 +141,27 @@ class Character(MySprite):
 
         (speedx, speedy) = self.speed
 
-        # Si vamos a la izquierda o a la derecha        
-            # Si vamos a la izquierda, le ponemos velocidad en esa dirección
+        if self.movement == UP:
+            speedy = -self.speedMovement
+        elif self.movement == DOWN:
+            speedy = self.speedMovement
+
         if self.movement == LEFT:
             speedx = -self.speedMovement
-            # Si vamos a la derecha, le ponemos velocidad en esa dirección
-        else:
+        elif self.movement == RIGHT:
             speedx = self.speedMovement
+
+
+        if speedx != 0 or speedy != 0:
+            self.moving = True
+            length = (speedx ** 2 + speedy ** 2) ** 0.5 
+            speedx = (speedx / length) * self.speed
+            speedy = (speedy / length) * self.speed
+
+            if abs(speedy) > abs(speedx):
+                self.movement = DOWN if speedy > 0 else UP
+            else:
+                self.movement = RIGHT if speedx > 0 else LEFT
 
 
         self.updatePosture()
@@ -166,7 +181,7 @@ class Player(Character):
     "Thiagic"
     def __init__(self):
         # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
-        Player.__init__(self,'thiagic', [5, 10, 6], SPEED_PLAYER, ANIMATION_PLAYER_DELAY);
+        Player.__init__(self,'thiagic', [5, 10, 6], SPEED_MULTIPLIER, ANIMATION_PLAYER_DELAY);
 
 
     def move(self, teclasPulsadas, arriba, abajo, izquierda, derecha):
@@ -199,7 +214,7 @@ class NoJugador(Character):
 
 # -------------------------------------------------
 # Clase Sniper
-
+""" 
 class Sniper(NoJugador):
     "El enemigo 'Sniper'"
     def __init__(self):
@@ -229,3 +244,4 @@ class Sniper(NoJugador):
         else:
             Personaje.move(self,IDLE)
 
+ """
