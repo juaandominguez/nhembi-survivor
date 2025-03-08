@@ -1,33 +1,56 @@
 import json
-import pygame, os
+import pygame, sys, os
+from pygame.locals import *
 
-class ResourceManager:
-    _instance = None
 
-    def __new__(cls):
-        if not cls._instance:
-            cls._instance = super().__new__(cls)
-            cls._instance._textures = {}
-            cls._instance._fonts = {}
-            cls._instance._sounds = {}
-        return cls._instance
+# -------------------------------------------------
+# Clase GestorRecursos
 
-    def get_texture(self, path):
-        if path not in self._textures:
-            self._textures[path] = pygame.image.load(path).convert_alpha()
-        return self._textures[path]
+# En este caso se implementa como una clase vacía, solo con métodos de clase
+class GestorRecursos(object):
+    recursos = {}
+            
+    @classmethod
+    def CargarImagen(cls, nombre, colorkey=None):
+        # Si el nombre de archivo está entre los recursos ya cargados
+        if nombre in cls.recursos:
+            # Se devuelve ese recurso
+            return cls.recursos[nombre]
+        # Si no ha sido cargado anteriormente
+        else:
+            # Se carga la imagen indicando la carpeta en la que está
+            fullname = os.path.join('imagenes', nombre)
+            try:
+                imagen = pygame.image.load(fullname)
+            except pygame.error:
+                raise SystemExit
+            imagen = imagen.convert()
+            if colorkey is not None:
+                if colorkey is -1:
+                    colorkey = imagen.get_at((0,0))
+                imagen.set_colorkey(colorkey, RLEACCEL)
+            # Se almacena
+            cls.recursos[nombre] = imagen
+            # Se devuelve
+            return imagen
 
-    def get_font(self, name, size):
-        key = (name, size)
-        if key not in self._fonts:
-            self._fonts[key] = pygame.font.Font(name, size)
-        return self._fonts[key]
-
-    def get_sound(self, path):
-        if path not in self._sounds:
-            self._sounds[path] = pygame.mixer.Sound(path)
-        return self._sounds[path]
-    
+    @classmethod
+    def CargarArchivoCoordenadas(cls, nombre):
+        # Si el nombre de archivo está entre los recursos ya cargados
+        if nombre in cls.recursos:
+            # Se devuelve ese recurso
+            return cls.recursos[nombre]
+        # Si no ha sido cargado anteriormente
+        else:
+            # Se carga el recurso indicando el nombre de su carpeta
+            fullname = os.path.join('imagenes', nombre)
+            pfile=open(fullname,'r')
+            datos=pfile.read()
+            pfile.close()
+            # Se almacena
+            cls.recursos[nombre] = datos
+            # Se devuelve
+            return datos
 
 
     @classmethod
@@ -66,20 +89,3 @@ class ResourceManager:
 
         return level_data_tileset, level_data_decorations, level_collisions
         
-    # @classmethod
-    # def CargarArchivoCoordenadas(cls, nombre):
-    #     # Si el nombre de archivo está entre los recursos ya cargados
-    #     if nombre in cls.recursos:
-    #         # Se devuelve ese recurso
-    #         return cls.recursos[nombre]
-    #     # Si no ha sido cargado anteriormente
-    #     else:
-    #         # Se carga el recurso indicando el nombre de su carpeta
-    #         fullname = os.path.join('sprites', nombre)
-    #         pfile=open(fullname,'r')
-    #         datos=pfile.read()
-    #         pfile.close()
-    #         # Se almacena
-    #         cls.recursos[nombre] = datos
-    #         # Se devuelve
-    #         return datos
