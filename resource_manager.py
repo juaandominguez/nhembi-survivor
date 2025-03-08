@@ -7,34 +7,50 @@ from pygame.locals import *
 # Clase GestorRecursos
 
 # En este caso se implementa como una clase vacía, solo con métodos de clase
-class ResourceManager:
-    resources = {}
-
+class GestorRecursos(object):
+    recursos = {}
+            
     @classmethod
-    def loadImage(cls, name):
-        if name in cls.resources:
-            return cls.resources[name]
+    def CargarImagen(cls, nombre, colorkey=None):
+        # Si el nombre de archivo está entre los recursos ya cargados
+        if nombre in cls.recursos:
+            # Se devuelve ese recurso
+            return cls.recursos[nombre]
+        # Si no ha sido cargado anteriormente
         else:
-            fullname = os.path.join("sprites", name)
+            # Se carga la imagen indicando la carpeta en la que está
+            fullname = os.path.join('imagenes', nombre)
             try:
-                image = pygame.image.load(fullname)
-            except pygame.error as message:
-                print("Cannot load image:", fullname)
-                raise SystemExit(message)
-            image = image.convert_alpha()
-            cls.resources[name] = image
-            return image
+                imagen = pygame.image.load(fullname)
+            except pygame.error:
+                raise SystemExit
+            imagen = imagen.convert()
+            if colorkey is not None:
+                if colorkey is -1:
+                    colorkey = imagen.get_at((0,0))
+                imagen.set_colorkey(colorkey, RLEACCEL)
+            # Se almacena
+            cls.recursos[nombre] = imagen
+            # Se devuelve
+            return imagen
 
     @classmethod
-    def loadCoordinates(cls, name):
-        if name in cls.resources:
-            return cls.resources[name]
+    def CargarArchivoCoordenadas(cls, nombre):
+        # Si el nombre de archivo está entre los recursos ya cargados
+        if nombre in cls.recursos:
+            # Se devuelve ese recurso
+            return cls.recursos[nombre]
+        # Si no ha sido cargado anteriormente
         else:
-            fullname = os.path.join("sprites", name)
-            with open(fullname, "r") as pfile:
-                data = pfile.read()
-            cls.resources[name] = data
-            return data
+            # Se carga el recurso indicando el nombre de su carpeta
+            fullname = os.path.join('imagenes', nombre)
+            pfile=open(fullname,'r')
+            datos=pfile.read()
+            pfile.close()
+            # Se almacena
+            cls.recursos[nombre] = datos
+            # Se devuelve
+            return datos
 
 
     @classmethod

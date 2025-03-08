@@ -3,7 +3,7 @@ import json
 import sys
 from abc import ABC, abstractmethod
 from scene import Scene  # Se asume que tienes una clase base Scene
-from resource_manager import ResourceManager  # Gestor de recursos
+from resource_manager import GestorRecursos  # Gestor de recursos
 # -------------------------------
 # Patrón Singleton para GameSettings
 # -------------------------------
@@ -351,7 +351,7 @@ class PauseMenu(Scene, UINavigationMixin):
         super().__init__(director)
         self.screen = director.screen
         self.scene_manager = director
-        self.resources = ResourceManager()
+        self.resources = GestorRecursos()
         self.background = None
         self.selected_index = 0
         self._setup_fonts()
@@ -446,15 +446,16 @@ class MenuScene(Scene,UINavigationMixin):
     def __init__(self, director):
         super().__init__(director)
         self.director = director
-        self.resources = ResourceManager()
+        self.screen = director.screen
+        self.resources = GestorRecursos()
         self.font = pygame.font.Font(None, 36)
         self.selected_index = 0
 
         # UI initialization
         self.title = self.font.render("Ñembi Survivor", True, (255, 255, 255))
-        self.title_rect = self.title.get_rect(center=(self.director.screen.get_width() // 2, 100))
+        self.title_rect = self.title.get_rect(center=(self.screen.get_width() // 2, 100))
 
-        btn_x = self.director.screen.get_width() // 2 - 50
+        btn_x = self.screen.get_width() // 2 - 50
         self.buttons = [
             UIFactory.create_button(btn_x, 200, "Jugar", self.start_game, self.font),
             UIFactory.create_button(btn_x, 250, "Ajustes", self.open_settings, self.font),
@@ -474,14 +475,16 @@ class MenuScene(Scene,UINavigationMixin):
     def update(self, delta_time):
         pass
 
-    def render(self, screen):
-        screen.fill((0, 0, 0))
-        screen.blit(self.title, self.title_rect)
+    def render(self):
+        self.screen.fill((0, 0, 0))
+        self.screen.blit(self.title, self.title_rect)
         for btn in self.buttons:
-            btn.render(screen)
+            btn.render(self.screen)
 
     def start_game(self):
-        self.director.push_scene("newgame")
+        pass
+        # self.director.push_scene("newgame")
+        # poner aqui FASE
 
     def quit_game(self):
         pygame.quit()
