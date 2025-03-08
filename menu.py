@@ -3,7 +3,6 @@ import json
 import sys
 from abc import ABC, abstractmethod
 from scene import Scene  # Se asume que tienes una clase base Scene
-from director import Director as scene_manager  # Gestor de escenas
 from resource_manager import ResourceManager  # Gestor de recursos
 # -------------------------------
 # Patrón Singleton para GameSettings
@@ -260,125 +259,109 @@ class PantallaMenu(PantallaBase):
 # -------------------------------
 # Pantalla de Ajustes
 # -------------------------------
-class PantallaAjustes(PantallaBase):
-    def __init__(self, screen, font, settings_instance, callback_save, callback_cancel):
-        super().__init__(screen, font)
-        self.settings_instance = settings_instance
-        self.callback_save = callback_save
-        self.callback_cancel = callback_cancel
+class SettingsScene(Scene):
+    def __init__(self, director):
+        super().__init__(director)
+        self.director = director
+        self.screen = director.screen
+        self.font = pygame.font.Font(None, 36)
+        self.settings = GameSettings()
 
+        # Componentes UI
         self.title = self.font.render("Ajustes", True, (255, 255, 255))
         self.title_rect = self.title.get_rect(center=(self.screen.get_width() // 2, 50))
-        music_volume = self.settings_instance.settings.get('music_volume', 0.5)
-        fx_volume = self.settings_instance.settings.get('fx_volume', 0.5)
-        fullscreen = self.settings_instance.settings.get('fullscreen', False)
-        resolution = self.settings_instance.settings.get('resolution', (1280, 720))
-        self.music_slider = Slider(300, 100, 200, 20, music_volume)
-        self.fx_slider = Slider(300, 150, 200, 20, fx_volume)
-        resolution_options = [
-            (800, 600),
-            (1024, 768),
-            (1280, 720),
-            (1920, 1080)
-        ]
+
+        # Inicializar componentes con valores actuales
+        self.music_slider = Slider(300, 100, 200, 20, self.settings.settings['music_volume'])
+        self.fx_slider = Slider(300, 150, 200, 20, self.settings.settings['fx_volume'])
+
+        resolution_options = [(800, 600), (1024, 768), (1280, 720), (1920, 1080)]
         try:
-            initial_index = resolution_options.index(resolution)
+            initial_res = self.settings.settings['resolution']
+            initial_index = resolution_options.index(initial_res)
         except ValueError:
             initial_index = 2
-        self.resolution_dropdown = Dropdown(300, 200, resolution_options, selected_index=initial_index, font=self.font)
-        self.fullscreen_toggle = Toggle(300, 250, fullscreen, font=self.font)
-        self.save_button = Button(50, 350, "Guardar y Salir", self.callback_save, self.font)
-        self.cancel_button = Button(50, 400, "Cancelar", self.callback_cancel, self.font)
+        self.resolution_dropdown = Dropdown(300, 200, resolution_options, initial_index, self.font)
+
+        self.fullscreen_toggle = Toggle(300, 250, self.settings.settings['fullscreen'], self.font)
+        self.save_button = Button(50, 350, "Guardar", self.save_settings, self.font)
+        self.back_button = Button(50, 400, "Volver", self.go_back, self.font)
+
         self.components = [
             self.music_slider,
             self.fx_slider,
             self.resolution_dropdown,
             self.fullscreen_toggle,
             self.save_button,
-            self.cancel_button
+            self.back_button
         ]
         self.selected_index = 0
+        self.update_selection()
+
+    def update_selection(self):
         for i, comp in enumerate(self.components):
             comp.selected = (i == self.selected_index)
 
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
-                self.components[self.selected_index].selected = False
+            if event.key == pygame.K_ESCAPE:
+                self.director.pop_scene()
+            elif event.key == pygame.K_UP:
                 self.selected_index = (self.selected_index - 1) % len(self.components)
-                self.components[self.selected_index].selected = True
+                self.update_selection()
             elif event.key == pygame.K_DOWN:
-                self.components[self.selected_index].selected = False
                 self.selected_index = (self.selected_index + 1) % len(self.components)
-                self.components[self.selected_index].selected = True
+                self.update_selection()
             else:
                 self.components[self.selected_index].handle_event(event)
 
-    def update(self):
+    def update(self, delta_time):
         for comp in self.components:
             comp.update()
 
     def render(self):
         self.screen.fill((0, 0, 0))
         self.screen.blit(self.title, self.title_rect)
+
         # Etiquetas
-        self.screen.blit(self.font.render("Volumen Música", True, (255, 255, 255)), (50, 100))
-        self.screen.blit(self.font.render("Volumen Efectos", True, (255, 255, 255)), (50, 150))
-        self.screen.blit(self.font.render("Resolución", True, (255, 255, 255)), (50, 200))
-        self.screen.blit(self.font.render("Pantalla completa", True, (255, 255, 255)), (50, 250))
+        self.screen.blit(self.font.render("Volumen Música:", True, (255, 255, 255)), (50, 100))
+        self.screen.blit(self.font.render("Volumen FX:", True, (255, 255, 255)), (50, 150))
+        self.screen.blit(self.font.render("Resolución:", True, (255, 255, 255)), (50, 200))
+        self.screen.blit(self.font.render("Pantalla completa:", True, (255, 255, 255)), (50, 250))
+
         for comp in self.components:
             comp.render(self.screen)
 
-# -------------------------------
-# Pantalla del Juego (Placeholder)
-# -------------------------------
-class PantallaJuego(PantallaBase):
-    def __init__(self, screen, font, callback_return):
-        super().__init__(screen, font)
-        self.callback_return = callback_return
-        self.title = self.font.render("Juego", True, (255, 255, 255))
-        self.title_rect = self.title.get_rect(center=(self.screen.get_width() // 2, 100))
-        btn_x = self.screen.get_width() // 2 - 50
-        start_y = 200
-        self.button_return = Button(btn_x, start_y, "Volver al Menú", self.callback_return, self.font)
-        self.components = [self.button_return]
-        self.selected_index = 0
-        for i, comp in enumerate(self.components):
-            comp.selected = (i == self.selected_index)
+    def save_settings(self):
+        """Guarda los ajustes y aplica cambios"""
+        self.settings.settings.update({
+            'music_volume': self.music_slider.value,
+            'fx_volume': self.fx_slider.value,
+            'resolution': self.resolution_dropdown.options[self.resolution_dropdown.selected_index],
+            'fullscreen': self.fullscreen_toggle.value
+        })
+        self.settings.save_settings()
+        new_screen = self.settings.apply_resolution(self.screen)
+        if new_screen != self.screen:
+            self.director.screen = new_screen
+        self.director.pop_scene()
 
-    def handle_event(self, event):
-        if event.type == pygame.KEYDOWN:
-            if event.key in (pygame.K_UP, pygame.K_DOWN):
-                pass  # Solo hay un botón, sin navegación
-            elif event.key == pygame.K_ESCAPE:
-                self.callback_return()
-            else:
-                self.components[self.selected_index].handle_event(event)
-
-    def update(self):
-        for comp in self.components:
-            comp.update()
-
-    def render(self):
-        self.screen.fill((0, 0, 0))
-        self.screen.blit(self.title, self.title_rect)
-        for comp in self.components:
-            comp.render(self.screen)
-
-
-
+    def go_back(self):
+        """Vuelve a la escena anterior sin guardar"""
+        self.director.pop_scene()
 # ================================
 
 class PauseMenu(Scene):
-    def __init__(self, screen, scene_manager):
-        super().__init__(screen, scene_manager)
-        self.screen = screen
-        self.scene_manager = scene_manager
+    def __init__(self,director):
+        super().__init__(director)
+        self.screen = director.screen
+        self.scene_manager = director
         self.resources = ResourceManager()
         self.background = None
         self._setup_fonts()
 
-        self.options = ["Continuar", "Volver al menú", "Salir"]
+        self.options = ["Continuar","Ajustes", "Volver al menú"]
+
         self.selected = 0
 
     def _setup_fonts(self):
@@ -437,112 +420,72 @@ class PauseMenu(Scene):
         """Ejecuta la acción correspondiente a la opción seleccionada."""
         if self.selected == 0:
             self.scene_manager.pop_scene()  # Continuar juego
+
         elif self.selected == 1:
-            self._return_to_main_menu()  # Volver al menú principal
+            self.scene_manager.push_scene("settings")
+
         elif self.selected == 2:
-            pygame.quit()
-            sys.exit()  # Salir del juego
+            self.scene_manager.pop_scene()
+            self.scene_manager.pop_scene()
 
     def _return_to_main_menu(self):
         """Vuelve al menú principal cerrando todas las escenas activas."""
         while self.scene_manager.scene_stack:
             self.scene_manager.pop_scene()
-        self.scene_manager.push_scene("main_menu")  # Asegúrate de tener una escena con esta clave en tu Scene Manager
+        self.scene_manager.push_scene("menu")  # Asegúrate de tener una escena con esta clave en tu Scene Manager
 
 # -------------------------------
 # Escena Unificada que gestiona las pantallas
 # -------------------------------
 class MenuScene(Scene):
-    def __init__(self, screen):
-        super().__init__(screen)
-        self.screen = screen
+    def __init__(self, director):
+        super().__init__(director)
+        self.director = director
+        self.screen = director.screen
         self.font = pygame.font.Font(None, 36)
-        self.settings_instance = GameSettings()
-        # Instanciar cada pantalla pasándole los callbacks para cambiar de estado
-        self.pantalla_menu = PantallaMenu(
-            screen,
-            self.font,
-            callback_start=self.start_game,
-            callback_settings=self.open_settings,
-            callback_quit=self.quit_game
-        )
-        self.pantalla_ajustes = PantallaAjustes(
-            screen,
-            self.font,
-            settings_instance=self.settings_instance,
-            callback_save=self.save_and_return_to_menu,
-            callback_cancel=self.cancel_settings
-        )
-        self.pantalla_juego = PantallaJuego(
-            screen,
-            self.font,
-            callback_return=self.return_to_menu_from_game
-        )
-        # La pantalla activa comienza siendo el menú
-        self.active_screen = self.pantalla_menu
+
+        # UI del menú principal
+        self.title = self.font.render("Ñembi Survivor", True, (255, 255, 255))
+        self.title_rect = self.title.get_rect(center=(self.screen.get_width() // 2, 100))
+
+        btn_x = self.screen.get_width() // 2 - 50
+        self.buttons = [
+            Button(btn_x, 200, "Jugar", self.start_game, self.font),
+            Button(btn_x, 250, "Ajustes", lambda: director.push_scene("settings"), self.font),
+            Button(btn_x, 300, "Salir", self.quit_game, self.font)
+        ]
+        self.selected_index = 0
+        self.update_selection()
+
+    def update_selection(self):
+        for i, btn in enumerate(self.buttons):
+            btn.selected = (i == self.selected_index)
 
     def handle_event(self, event):
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-        self.active_screen.handle_event(event)
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                self.selected_index = (self.selected_index - 1) % len(self.buttons)
+                self.update_selection()
+            elif event.key == pygame.K_DOWN:
+                self.selected_index = (self.selected_index + 1) % len(self.buttons)
+                self.update_selection()
+            elif event.key == pygame.K_RETURN:
+                self.buttons[self.selected_index].callback()
 
     def update(self, delta_time):
-        self.active_screen.update()
+        pass
 
     def render(self):
-        self.active_screen.render()
+        self.screen.fill((0, 0, 0))
+        self.screen.blit(self.title, self.title_rect)
+        for btn in self.buttons:
+            btn.render(self.screen)
 
-    # --- Callbacks para cambiar de pantalla ---
     def start_game(self):
-        self.active_screen = self.pantalla_juego
-
-    def open_settings(self):
-        self.reload_settings_components()
-        self.active_screen = self.pantalla_ajustes
-
-    def reload_settings_components(self):
-        # Actualiza los componentes de ajustes con los valores actuales
-        music_volume = self.settings_instance.settings.get('music_volume', 0.5)
-        fx_volume = self.settings_instance.settings.get('fx_volume', 0.5)
-        fullscreen = self.settings_instance.settings.get('fullscreen', False)
-        resolution = self.settings_instance.settings.get('resolution', (1280, 720))
-        self.pantalla_ajustes.music_slider.value = music_volume
-        self.pantalla_ajustes.fx_slider.value = fx_volume
-        try:
-            self.pantalla_ajustes.resolution_dropdown.selected_index = self.pantalla_ajustes.resolution_dropdown.options.index(resolution)
-        except ValueError:
-            self.pantalla_ajustes.resolution_dropdown.selected_index = 2
-        self.pantalla_ajustes.fullscreen_toggle.value = fullscreen
-        self.pantalla_ajustes.selected_index = 0
-        for i, comp in enumerate(self.pantalla_ajustes.components):
-            comp.selected = (i == self.pantalla_ajustes.selected_index)
+        pass
+        # self.director.push_scene("newgame")
+        # poner aqui FASE
 
     def quit_game(self):
         pygame.quit()
         sys.exit()
-
-    def save_and_return_to_menu(self):
-        # Guardar los ajustes actuales
-        self.settings_instance.settings['music_volume'] = self.pantalla_ajustes.music_slider.value
-        self.settings_instance.settings['fx_volume'] = self.pantalla_ajustes.fx_slider.value
-        self.settings_instance.settings['resolution'] = self.pantalla_ajustes.resolution_dropdown.options[
-            self.pantalla_ajustes.resolution_dropdown.selected_index]
-        self.settings_instance.settings['fullscreen'] = self.pantalla_ajustes.fullscreen_toggle.value
-        new_screen = self.settings_instance.apply_resolution(self.screen)
-        if new_screen != self.screen:
-            self.screen = new_screen
-        self.settings_instance.save_settings()
-        self.active_screen = self.pantalla_menu
-
-    def cancel_settings(self):
-        self.active_screen = self.pantalla_menu
-
-    def return_to_menu_from_game(self):
-        self.active_screen = self.pantalla_menu
-
-    def pause(self):
-        pass
-
-    def resume(self):
-        pass
