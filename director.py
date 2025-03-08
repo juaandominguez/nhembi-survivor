@@ -1,7 +1,6 @@
 import pygame
 import sys
 from menu import PauseMenu, MenuScene, SettingsScene
-from Escenas.new_game_scene import NewGameScene
 # Constants
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -78,6 +77,7 @@ class Director:
         self.exit_current_scene = True
         if self.scene_stack:
             self.scene_stack.pop()
+
 
     def change_scene(self, scene):
         """Replace current scene with a new one"""

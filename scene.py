@@ -17,5 +17,5 @@ class Scene:
     def eventos(self, *args):
         raise NotImplemented("Tiene que implementar el metodo eventos.")
 
-    def dibujar(self, pantalla):
+    def render(self, pantalla):
         raise NotImplemented("Tiene que implementar el metodo dibujar.")
