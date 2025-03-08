@@ -1,6 +1,5 @@
 import pygame
 import sys
-from fase import Fase
 from menu import PauseMenu, MenuScene, SettingsScene
 # Constants
 SCREEN_WIDTH = 800
@@ -29,7 +28,7 @@ class Director:
         self.scene_map = {
             "menu": MenuScene(self),
             "pause": PauseMenu(self),
-            "newgame": Fase(self),
+            #"newgame": NewGameScene(self),
             "settings": SettingsScene(self)
         }
 
@@ -54,7 +53,7 @@ class Director:
             # Update and render
             scene.update(delta_time)
             self.screen.fill((0, 0, 0))  # Clear screen
-            scene.render(self.screen)
+            scene.render()
             pygame.display.flip()
 
     def run(self):
