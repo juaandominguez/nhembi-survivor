@@ -234,8 +234,8 @@ class Fase(Scene):
 
         # Indicamos la acción a realizar segun la tecla pulsada para cada jugador
         teclasPulsadas = pygame.key.get_pressed()
-        self.jugador1.mover(teclasPulsadas, K_UP, K_DOWN, K_LEFT, K_RIGHT)
-        self.jugador2.mover(teclasPulsadas, K_w,  K_s,    K_a,    K_d)
+        self.jugador1.move(teclasPulsadas, K_UP, K_DOWN, K_LEFT, K_RIGHT)
+        self.jugador2.move(teclasPulsadas, K_w,  K_s,    K_a,    K_d)
 
 # -------------------------------------------------
 # Clase Plataforma
@@ -258,7 +258,7 @@ class Plataforma(MiSprite):
 
 class Cielo:
     def __init__(self):
-        self.sol = GestorRecursos.CargarImagen('sol.png', -1)
+        self.sol = ResourceManager.loadImage('sol.png', -1)
         self.sol = pygame.transform.scale(self.sol, (300, 200))
 
         self.rect = self.sol.get_rect()
@@ -289,7 +289,7 @@ class Cielo:
 
 class Decorado:
     def __init__(self):
-        self.imagen = GestorRecursos.CargarImagen('decorado.png', -1)
+        self.imagen = ResourceManager.loadImage('decorado.png', -1)
         self.imagen = pygame.transform.scale(self.imagen, (1200, 300))
 
         self.rect = self.imagen.get_rect()
