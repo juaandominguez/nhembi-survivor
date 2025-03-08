@@ -2,12 +2,17 @@ import pygame, sys, os
 from pygame.locals import *
 from scene import *
 from resource_manager import *
+from collections import namedtuple
 
 # -------------------------------------------------
 # -------------------------------------------------
 # Constants
 # -------------------------------------------------
 # -------------------------------------------------
+
+ActionTuple = namedtuple('ActionTuple', 'prefix numImages') 
+AVAILABLE_ACTIONS =[('walk',[8,8,8,8]), ('slash',[6,6,6,6]), ('hurt',[6])]
+
 
 # Movements
 IDLE = 0
@@ -69,27 +74,32 @@ class MySprite(pygame.sprite.Sprite):
 class Character(MySprite):
     "Any character from the game"
 
-    def __init__(self, image, coordinates, numImages, speedMovement, animationDelay):
+    def __init__(self, imagePrefix, numImages, speedMovement, animationDelay):
 
         MySprite.__init__(self);
 
-        self.hoja = ResourceManager.loadImage(image)
+        SpriteCharacter= namedtuple('SpriteCharacter', 'image coords') 
+
+        # Map{action, (image, coordinates)}
+        self.spriteCharacter = {}
+
+        self.coordinatesFile = []
+
+        for action in AVAILABLE_ACTIONS:
+            self.spriteCharacter[action] = SpriteCharacter(ResourceManager.loadImage(imagePrefix + '/' + action + '.png'),
+                                            ResourceManager.loadCoordinates(imagePrefix + '/' + action + '.txt'))
+            self.coordinates = self.spriteCharacter[action].coords
+            data = self.coordinates.split()
+            self.coordinatesFile.append([])
+            cont = 0
+            for line in range(0, len(numImages)):
+                self.coordinatesFile[line].append([])
+                tmp = self.coordinatesFile[line]
+                for posture in range(1, numImages[line]+1):
+                    tmp[line].append(pygame.Rect((int(data[cont]), int(data[cont+1])), (int(data[cont+2]), int(data[cont+3]))))
+                    cont += 4
 
         self.movement = IDLE
-
-        # Read the coordinates from the file
-        data = ResourceManager.loadCoordinates(coordinates)
-        data = data.split()
-        self.numPosture = 1;
-        self.numImagePosture = 0;
-        cont = 0;
-        self.coordinatesFile = [];
-        for line in range(0, 3):
-            self.coordinatesFile.append([])
-            tmp = self.coordinatesFile[line]
-            for posture in range(1, numImages[line]+1):
-                tmp.append(pygame.Rect((int(data[cont]), int(data[cont+1])), (int(data[cont+2]), int(data[cont+3]))))
-                cont += 4
 
         # Delay for the movement of the character in the animation
         self.movementDelay = 0;
@@ -98,7 +108,7 @@ class Character(MySprite):
         self.numPosture = IDLE
 
         # Rect of the sprite
-        self.rect = pygame.Rect(100,100,self.coordinatesFile[self.numPosture][self.numImagePosture][2],self.coordinatesFile[self.numPosture][self.numImagePosture][3])
+        self.rect = pygame.Rect(0, 0, self.coordinatesFile[self.numPosture][0][0].width, self.coordinatesFile[self.numPosture][0][0].height)
 
         self.speedMovement = speedMovement
         self.animationDelay = animationDelay
@@ -112,33 +122,31 @@ class Character(MySprite):
 
 
     def updatePosture(self):
+        self.movementDelay += 1
+        
+        if self.movementDelay >= self.animationDelay:
+            self.movementDelay = 0
+            
+        if self.movement != IDLE:
+            self.numPosture += 1
+            if self.numPosture >= len(self.coordinatesFile[self.movement]):
+                self.numPosture = 0
+        
+        self.image = self.spriteCharacter['walk'].image.subsurface(self.coordinatesFile[self.movement][self.numPosture][0])
 
-        self.movementDelay -= 1
 
-        # Draw new possture when the delay is over
-        if (self.movementDelay < 0):
-            self.movementDelay = self.animationDelay
-
-            self.numImagePosture += 1
-            if self.numImagePosture >= len(self.coordinatesFile[self.numPosture]):
-                self.numImagePosture = 0;
-            if self.numImagePosture < 0:
-                self.numImagePosture = len(self.coordinatesFile[self.numPosture])-1
-            self.image = self.hoja.subsurface(self.coordinatesFile[self.numPosture][self.numImagePosture])
 
     def update(self, time):
 
         (speedx, speedy) = self.speed
 
         # Si vamos a la izquierda o a la derecha        
-        if (self.movement == LEFT) or (self.movement == RIGHT):
-
             # Si vamos a la izquierda, le ponemos velocidad en esa dirección
-            if self.movement == LEFT:
-                speedx = -self.speedMovement
+        if self.movement == LEFT:
+            speedx = -self.speedMovement
             # Si vamos a la derecha, le ponemos velocidad en esa dirección
-            else:
-                speedx = self.speedMovement
+        else:
+            speedx = self.speedMovement
 
 
         self.updatePosture()
@@ -155,10 +163,10 @@ class Character(MySprite):
 # Clase Jugador
 
 class Player(Character):
-    "Cualquier personaje del juego"
+    "Thiagic"
     def __init__(self):
         # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
-        Player.__init__(self,'thiagic/walk.png','coordJugador.txt', [5, 10, 6], SPEED_PLAYER, ANIMATION_PLAYER_DELAY);
+        Player.__init__(self,'thiagic', [5, 10, 6], SPEED_PLAYER, ANIMATION_PLAYER_DELAY);
 
 
     def move(self, teclasPulsadas, arriba, abajo, izquierda, derecha):
@@ -175,11 +183,11 @@ class Player(Character):
 # -------------------------------------------------
 # Clase NoJugador
 
-class NoJugador(Personaje):
+class NoJugador(Character):
     "El resto de personajes no jugadores"
     def __init__(self, archivoImagen, archivoCoordenadas, numImagenes, velocidad, velocidadSalto, retardoAnimacion):
         # Primero invocamos al constructor de la clase padre con los parametros pasados
-        Personaje.__init__(self, archivoImagen, archivoCoordenadas, numImagenes, velocidad, velocidadSalto, retardoAnimacion);
+        Character.__init__(self, archivoImagen, archivoCoordenadas, numImagenes, velocidad, velocidadSalto, retardoAnimacion);
 
     # Aqui vendria la implementacion de la IA segun las posiciones de los jugadores
     # La implementacion por defecto, este metodo deberia de ser implementado en las clases inferiores
