@@ -88,4 +88,4 @@ class GestorRecursos(object):
                     level_collisions.append(pygame.Rect(x, y, 1, 1))
 
         return level_data_tileset, level_data_decorations, level_collisions
-        
+
