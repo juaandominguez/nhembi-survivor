@@ -22,8 +22,8 @@ class Fase(Scene):
         self.camera = Camera(self.level.width, self.level.height, ANCHO_PANTALLA, ALTO_PANTALLA)
         
         # Obtener las colisiones del nivel
-        self.collision_tiles = self.level.get_level_collisions()
-
+        self.collisionTiles = self.level.get_level_collisions()
+        
         # Creamos los sprites de los jugadores
         self.jugador = Player()
         self.grupoJugador = pygame.sprite.Group(self.jugador)
@@ -60,6 +60,27 @@ class Fase(Scene):
             # self.director.pop_scene()
             pass
         
+        # Comprobar colisiones con el mapa
+        for tile in self.collisionTiles:
+            if self.jugador.rect.colliderect(tile):
+                # Determinar la dirección de la colisión
+                dx = (self.jugador.rect.centerx - tile.centerx)
+                dy = (self.jugador.rect.centery - tile.centery)
+                
+                # Ajustar la posición del jugador según la dirección de la colisión
+                if abs(dx) > abs(dy):
+                    # Colisión horizontal
+                    if dx > 0:
+                        self.jugador.rect.left = tile.right
+                    else:
+                        self.jugador.rect.right = tile.left
+                else:
+                    # Colisión vertical
+                    if dy > 0:
+                        self.jugador.rect.top = tile.bottom
+                    else:
+                        self.jugador.rect.bottom = tile.top
+
     def render(self, pantalla):
         # Primero dibujamos el nivel
         self.level.draw(pantalla, self.camera)

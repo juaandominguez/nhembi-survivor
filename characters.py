@@ -40,7 +40,7 @@ class Direction(IntEnum):
 # Direction to sprite mapping
 # This maps movement directions to the correct sprite direction in the sprite sheet
 DIRECTION_TO_SPRITE = {
-    Direction.IDLE: 0,  # Idle uses the first row
+    Direction.IDLE: 2,  # Idle uses the first row
     Direction.LEFT: 1,  # Left uses the second row
     Direction.RIGHT: 3, # Right uses the fourth row
     Direction.UP: 0,    # Up uses the fifth row
@@ -370,14 +370,27 @@ class Character(MySprite):
 
         if self.movement == Direction.UP:
             speed_y = -self.speed_movement
-        elif self.movement == Direction.DOWN:
+        if self.movement == Direction.DOWN:
             speed_y = self.speed_movement
-        elif self.movement == Direction.LEFT:
+        if self.movement == Direction.LEFT:
             speed_x = -self.speed_movement
-        elif self.movement == Direction.RIGHT:
+        if self.movement == Direction.RIGHT:
             speed_x = self.speed_movement
 
         # Update the speed
+        if speed_x != 0 or speed_y != 0:
+            self.moving = True
+            length = (speed_x ** 2 + speed_y ** 2) ** 0.5 
+            speed_x = (speed_x / length) * self.speed_movement
+            speed_y = (speed_y / length) * self.speed_movement
+
+            if abs(speed_y) > abs(speed_x):
+                self.movement = Direction.DOWN if speed_y > 0 else Direction.UP
+            else:
+                self.movement = Direction.RIGHT if speed_x > 0 else Direction.LEFT
+        else:
+            self.moving = False
+            
         self.speed = (speed_x, speed_y)
 
         # Update the posture/animation
