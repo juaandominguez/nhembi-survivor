@@ -77,38 +77,60 @@ class Character(MySprite):
 
     def __init__(self, imagePrefix, speedMovement, animationDelay):
 
-        MySprite.__init__(self);
+        MySprite.__init__(self)
 
-        SpriteCharacter= namedtuple('SpriteCharacter', 'image coords') 
+        SpriteCharacter = namedtuple('SpriteCharacter', 'image coords') 
 
         # Map{action, (image, coordinates)}
         self.spriteCharacter = {}
 
-        self.coordinatesFile = []
+        # Initialize coordinatesFile with empty lists for each direction
+        self.coordinatesFile = [[] for _ in range(5)]  # IDLE, LEFT, RIGHT, UP, DOWN
 
         for action in AVAILABLE_ACTIONS:
-            self.spriteCharacter[action.prefix] = SpriteCharacter(ResourceManager.loadImage(imagePrefix + '/' + action.prefix + '.png'),
-                                            ResourceManager.loadCoordinates(imagePrefix + '/' + action.prefix + '.txt'))
-            self.coordinates = self.spriteCharacter[action.prefix].coords
-            data = self.coordinates.split()
-            self.coordinatesFile.append([])
-            for line in range(0, len(action.numImages)):
-                self.coordinatesFile.append([])
-                tmp = self.coordinatesFile[line]
-                for i in range(0, action.numImages[line]):
-                    index = line * len(action.numImages) + i * 4
-                    tmp.append(pygame.Rect((int(data[index]), int(data[index+1])), (int(data[index+2]), int(data[index+3]))))
+            try:
+                self.spriteCharacter[action.prefix] = SpriteCharacter(
+                    ResourceManager.loadImage(imagePrefix + '/' + action.prefix + '.png'),
+                    ResourceManager.loadCoordinates(imagePrefix + '/' + action.prefix + '.txt')
+                )
+                
+                self.coordinates = self.spriteCharacter[action.prefix].coords
+                data = self.coordinates.split()
+                
+                # Process coordinates for each direction
+                for line in range(len(action.numImages)):
+                    # Ensure we have enough frames for this direction
+                    while len(self.coordinatesFile[line]) < action.numImages[line]:
+                        self.coordinatesFile[line].append(None)
+                    
+                    # Load each frame's coordinates
+                    for i in range(action.numImages[line]):
+                        index = line * 4 + i * 4
+                        if index + 3 < len(data):
+                            rect = pygame.Rect(
+                                (int(data[index]), int(data[index+1])),
+                                (int(data[index+2]), int(data[index+3]))
+                            )
+                            self.coordinatesFile[line][i] = rect
+            except Exception as e:
+                print(f"Error loading sprites for {imagePrefix}/{action.prefix}: {e}")
 
         self.movement = IDLE
+        self.moving = False
 
         # Delay for the movement of the character in the animation
-        self.movementDelay = 0;
+        self.movementDelay = 0
 
         # Initial posture of the sprite
-        self.numPosture = IDLE
+        self.numPosture = 0
 
-        # Rect of the sprite
-        self.rect = pygame.Rect(0, 0, self.coordinatesFile[self.numPosture][0][0], self.coordinatesFile[self.numPosture][0][0])
+        # Ensure we have at least one valid frame
+        if len(self.coordinatesFile[IDLE]) > 0 and self.coordinatesFile[IDLE][0] is not None:
+            # Rect of the sprite
+            self.rect = pygame.Rect(0, 0, self.coordinatesFile[IDLE][0].width, self.coordinatesFile[IDLE][0].height)
+        else:
+            # Fallback to a default rect
+            self.rect = pygame.Rect(0, 0, 32, 32)
 
         self.speedMovement = speedMovement
         self.animationDelay = animationDelay
@@ -127,47 +149,39 @@ class Character(MySprite):
         if self.movementDelay >= self.animationDelay:
             self.movementDelay = 0
             
-        if self.movement != IDLE:
-            self.numPosture += 1
-            if self.numPosture >= len(self.coordinatesFile[self.movement]):
-                self.numPosture = 0
-
+            # Only update the frame if we're not idle
+            if self.movement != IDLE:
+                self.numPosture += 1
+                if self.numPosture >= len(self.coordinatesFile[self.movement]):
+                    self.numPosture = 0
         
-        self.image = self.spriteCharacter[action].image.subsurface(self.coordinatesFile[self.movement][self.numPosture])
+        # Ensure we have valid indices
+        if self.movement < len(self.coordinatesFile) and self.numPosture < len(self.coordinatesFile[self.movement]):
+            self.image = self.spriteCharacter[action].image.subsurface(self.coordinatesFile[self.movement][self.numPosture])
 
 
 
     def update(self, time):
+        # Get current speed
+        speedx, speedy = 0, 0
 
-        (speedx, speedy) = self.speed
-
+        # Set speed based on movement direction
         if self.movement == UP:
             speedy = -self.speedMovement
         elif self.movement == DOWN:
             speedy = self.speedMovement
-
-        if self.movement == LEFT:
+        elif self.movement == LEFT:
             speedx = -self.speedMovement
         elif self.movement == RIGHT:
             speedx = self.speedMovement
 
-
-        if speedx != 0 or speedy != 0:
-            self.moving = True
-            length = (speedx ** 2 + speedy ** 2) ** 0.5 
-            speedx = (speedx / length) * self.speed
-            speedy = (speedy / length) * self.speed
-
-            if abs(speedy) > abs(speedx):
-                self.movement = DOWN if speedy > 0 else UP
-            else:
-                self.movement = RIGHT if speedx > 0 else LEFT
-
-
-        self.updatePosture()
-
+        # Update the speed
         self.speed = (speedx, speedy)
 
+        # Update the posture/animation
+        self.updatePosture()
+
+        # Call the parent class update to handle the actual movement
         MySprite.update(self, time)
         
         return
@@ -181,18 +195,20 @@ class Player(Character):
     "Thiagic"
     def __init__(self):
         # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
-        Character.__init__(self,'thiagic', SPEED_MULTIPLIER, ANIMATION_PLAYER_DELAY);
+        Character.__init__(self, 'thiagic', SPEED_MULTIPLIER, ANIMATION_PLAYER_DELAY)
 
 
     def move(self, teclasPulsadas, arriba, abajo, izquierda, derecha):
         if teclasPulsadas[arriba]:
-            Character.move(self,UP)
+            Character.move(self, UP)
+        elif teclasPulsadas[abajo]:
+            Character.move(self, DOWN)
         elif teclasPulsadas[izquierda]:
-            Character.move(self,LEFT)
+            Character.move(self, LEFT)
         elif teclasPulsadas[derecha]:
-            Character.move(self,RIGHT)
+            Character.move(self, RIGHT)
         else:
-            Character.move(self,IDLE)
+            Character.move(self, IDLE)
 
 
 
@@ -203,22 +219,26 @@ class Enemy(Character):
     "El resto de personajes no jugadores"
     def __init__(self, imagePrefix, speedMovement, animationDelay):
         # Primero invocamos al constructor de la clase padre con los parametros pasados
-        Character.__init__(self, imagePrefix, speedMovement, animationDelay);
+        Character.__init__(self, imagePrefix, speedMovement, animationDelay)
+        self.moving = False
 
     # Aqui vendria la implementacion de la IA segun las posiciones de los jugadores
     # La implementacion por defecto, este metodo deberia de ser implementado en las clases inferiores
     #  mostrando la personalidad de cada enemigo
-    def move_cpu(self, jugador1):
+    def move_cpu(self, jugador):
+        """
+        Método base para la IA de los enemigos.
+        Debe ser implementado por las clases hijas.
+        """
         # Por defecto un enemigo no hace nada
-        #  (se podria programar, por ejemplo, que disparase al jugador por defecto)
-        return
+        Character.move(self, IDLE)
 
 
 class Rat(Enemy):
     "Ratilla"
     def __init__(self):
         # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
-        Character.__init__(self,'enemies/enemy_rat', SPEED_MULTIPLIER, ANIMATION_PLAYER_DELAY);
+        Enemy.__init__(self, 'enemies/enemy_rat', SPEED_MULTIPLIER, ANIMATION_PLAYER_DELAY)
 
 
     def move_cpu(self, player):
@@ -248,6 +268,7 @@ class Rat(Enemy):
                 Character.move(self, DOWN)
             else:
                 Character.move(self, UP)
+
 # -------------------------------------------------
 # Clase Sniper
 """ 
