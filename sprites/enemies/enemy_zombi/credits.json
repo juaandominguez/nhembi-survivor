@@ -1,0 +1,79 @@
+{
+  "colors": {
+    "name": "Liberated Palette",
+    "authors": [
+      "Eliza Wyatt (DeathsDarling)"
+    ],
+    "urls": [
+      "https://github.com/ElizaWy/LPC/wiki/Style-Guide#color-palette"
+    ],
+    "licenses": [
+      "OGA-BY 3.0"
+    ],
+    "notes": [
+      "Original palette made for the LPC set, by Eliza Wyatt."
+    ]
+  },
+  "anatomy.body.zombie": {
+    "notes": [
+      "2023-12 [napsio]: minimized colors to 6 for each material and fixed broken colors"
+    ],
+    "authors": [
+      "napsio",
+      "Stephen Challener (Redshrike)",
+      "Johannes Sjölund (wulax)",
+      "Sander Frenken (castelonia)",
+      "Benjamin K. Smith (BenCreating)",
+      "bluecarrot16"
+    ],
+    "licenses": [
+      "CC-BY-SA 3.0",
+      "GPL 3.0"
+    ],
+    "urls": [
+      "https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles",
+      "https://opengameart.org/content/lpc-medieval-fantasy-character-sprites",
+      "https://opengameart.org/content/lpc-zombie",
+      "https://opengameart.org/content/lpc-character-bases"
+    ],
+    "name": "Zombie"
+  },
+  "anatomy.head.zombie": {
+    "notes": [
+      "2023-12 [napsio]: minimized colors to 6 for each material and fixed broken colors"
+    ],
+    "authors": [
+      "napsio",
+      "bluecarrot16",
+      "Benjamin K. Smith (BenCreating)",
+      "Sander Frenken (castelonia)",
+      "Stephen Challener (Redshrike)"
+    ],
+    "licenses": [
+      "CC-BY-SA 3.0",
+      "GPL 3.0"
+    ],
+    "urls": [
+      "https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles",
+      "https://opengameart.org/content/lpc-zombie",
+      "https://opengameart.org/content/lpc-character-bases"
+    ],
+    "name": "Zombie"
+  },
+  "injuries.hand.hook": {
+    "notes": [
+      "2023-12 [napsio]: minimized colors to 6 for each material and fixed broken colors"
+    ],
+    "authors": [
+      "napsio",
+      "bluecarrot16"
+    ],
+    "licenses": [
+      "CC-BY-SA 3.0"
+    ],
+    "urls": [
+      "https://opengameart.org/content/lpc-pirates"
+    ],
+    "name": "Hook"
+  }
+}
