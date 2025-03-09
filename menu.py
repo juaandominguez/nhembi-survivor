@@ -78,7 +78,7 @@ class UIComponent(ABC):
         self.selected = False
 
     @abstractmethod
-    def handle_event(self, event):
+    def eventos(self, event):
         pass
 
     @abstractmethod
@@ -105,7 +105,7 @@ class Slider(UIComponent):
         self.color = color
         self.bg_color = bg_color
 
-    def handle_event(self, event):
+    def eventos(self, event):
         if event.type == pygame.KEYDOWN and self.selected:
             if event.key == pygame.K_LEFT:
                 self.value = max(self.min_value, self.value - self.step)
@@ -137,7 +137,7 @@ class Dropdown(UIComponent):
         self.font = font or pygame.font.Font(None, 36)
         self.text_color = text_color
 
-    def handle_event(self, event):
+    def eventos(self, event):
         if event.type == pygame.KEYDOWN and self.selected:
             if event.key == pygame.K_LEFT:
                 self.selected_index = (self.selected_index - 1) % len(self.options)
@@ -167,7 +167,7 @@ class Toggle(UIComponent):
         self.font = font or pygame.font.Font(None, 36)
         self.text_color = text_color
 
-    def handle_event(self, event):
+    def eventos(self, event):
         if event.type == pygame.KEYDOWN and self.selected:
             if event.key in (pygame.K_LEFT, pygame.K_RIGHT):
                 self.value = not self.value
@@ -196,7 +196,7 @@ class Button(UIComponent):
         self.text_color = text_color
         self.rect = None
 
-    def handle_event(self, event):
+    def eventos(self, event):
         if event.type == pygame.KEYDOWN and self.selected:
             if event.key == pygame.K_RETURN:
                 self.callback()
@@ -222,10 +222,10 @@ class UINavigationMixin:
             elif event.key in (pygame.K_LEFT, pygame.K_RIGHT):
                 # Delegar el manejo de izquierda/derecha al componente seleccionado
                 if 0 <= self.selected_index < len(components):
-                    components[self.selected_index].handle_event(event)
+                    components[self.selected_index].eventos(event)
             elif event.key == pygame.K_RETURN:
                 if 0 <= self.selected_index < len(components):
-                    components[self.selected_index].handle_event(event)
+                    components[self.selected_index].eventos(event)
 
     def _move_selection(self, direction, components):
         if 0 <= self.selected_index < len(components):
@@ -305,7 +305,7 @@ class SettingsScene(Scene, UINavigationMixin):
         for i, comp in enumerate(self.components):
             comp.selected = (i == self.selected_index)
 
-    def handle_event(self, event):
+    def eventos(self, event):
         self.handle_ui_navigation(event, self.components)
         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             self.director.pop_scene()
@@ -314,18 +314,18 @@ class SettingsScene(Scene, UINavigationMixin):
         for comp in self.components:
             comp.update()
 
-    def render(self):
-        self.screen.fill((0, 0, 0))
-        self.screen.blit(self.title, self.title_rect)
+    def render(self, screen):
+        screen.fill((0, 0, 0))
+        screen.blit(self.title, self.title_rect)
 
         # Etiquetas
-        self.screen.blit(self.font.render("Volumen Música:", True, (255, 255, 255)), (50, 100))
-        self.screen.blit(self.font.render("Volumen FX:", True, (255, 255, 255)), (50, 150))
-        self.screen.blit(self.font.render("Resolución:", True, (255, 255, 255)), (50, 200))
-        self.screen.blit(self.font.render("Pantalla completa:", True, (255, 255, 255)), (50, 250))
+        screen.blit(self.font.render("Volumen Música:", True, (255, 255, 255)), (50, 100))
+        screen.blit(self.font.render("Volumen FX:", True, (255, 255, 255)), (50, 150))
+        screen.blit(self.font.render("Resolución:", True, (255, 255, 255)), (50, 200))
+        screen.blit(self.font.render("Pantalla completa:", True, (255, 255, 255)), (50, 250))
 
         for comp in self.components:
-            comp.render(self.screen)
+            comp.render(screen)
 
     def save_settings(self):
         """Guarda los ajustes y aplica cambios"""
@@ -401,25 +401,25 @@ class PauseMenu(Scene, UINavigationMixin):
         for btn in self.buttons:
             btn.update()
 
-    def render(self):
+    def render(self,screen):
         # Fondo con efecto de pausa
         if self.background:
-            self.screen.blit(self.background, (0, 0))
+            screen.blit(self.background, (0, 0))
 
-        overlay = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)
+        overlay = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
         overlay.fill((0, 0, 0, 180))
-        self.screen.blit(overlay, (0, 0))
+        screen.blit(overlay, (0, 0))
 
         # Título
         title = self.title_font.render("PAUSA", True, (255, 255, 255))
-        title_rect = title.get_rect(center=(self.screen.get_width() // 2, 200))
-        self.screen.blit(title, title_rect)
+        title_rect = title.get_rect(center=(screen.get_width() // 2, 200))
+        screen.blit(title, title_rect)
 
         # Botones
         for btn in self.buttons:
-            btn.render(self.screen)
+            btn.render(screen)
 
-    def handle_event(self, event):
+    def eventos(self, event):
         self.handle_ui_navigation(event, self.buttons)
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
@@ -467,7 +467,7 @@ class MenuScene(Scene,UINavigationMixin):
         for i, btn in enumerate(self.buttons):
             btn.selected = (i == self.selected_index)
 
-    def handle_event(self, event):
+    def eventos(self, event):
         self.handle_ui_navigation(event, self.buttons)
         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             self.quit_game()
