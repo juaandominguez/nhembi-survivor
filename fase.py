@@ -29,11 +29,11 @@ class Fase(Scene):
         self.grupoJugador = pygame.sprite.Group(self.jugador)
 
         # Ponemos a los jugadores en sus posiciones iniciales
-        self.jugador.setPosition((200, 200))
+        self.jugador.set_position((200, 200))
 
         # Y los enemigos que tendran en este decorado
         enemy1 = Rat()
-        enemy1.setPosition((400, 300))
+        enemy1.set_position((400, 300))
 
         # Creamos un grupo con los enemigos
         self.grupoEnemigos = pygame.sprite.Group(enemy1)
@@ -57,7 +57,8 @@ class Fase(Scene):
         # Comprobamos si hay colision entre algun jugador y algun enemigo
         if pygame.sprite.groupcollide(self.grupoJugador, self.grupoEnemigos, False, False) != {}:
             # Se le dice al director que salga de esta Scene y ejecute la siguiente en la pila
-            self.director.pop_scene()
+            # self.director.pop_scene()
+            pass
         
     def render(self, pantalla):
         # Primero dibujamos el nivel

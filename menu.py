@@ -96,7 +96,6 @@ class Slider(UIComponent):
     def __init__(self, x, y, width, height, value, min_value=0, max_value=1, step=0.1,
                  thumb_size=15, color=(0, 255, 0), bg_color=(200, 200, 200)):
         super().__init__()
-        print("Slider")
         self.rect = pygame.Rect(x, y, width, height)
         self.value = value
         self.min_value = min_value
@@ -131,7 +130,6 @@ class Slider(UIComponent):
 class Dropdown(UIComponent):
     def __init__(self, x, y, options, selected_index=0, font=None, text_color=(255, 255, 255)):
         super().__init__()
-        print("Dropdown")
         self.x = x
         self.y = y
         self.options = options  # Lista de tuplas (ancho, alto)
@@ -249,7 +247,6 @@ class UINavigationMixin:
 class SettingsScene(Scene, UINavigationMixin):
     def __init__(self, director):
         Scene.__init__(self, director)
-        print("SETTINGS SCENE")
         self.director = director
         self.screen = director.screen
         self.font = pygame.font.Font(None, 36)
@@ -351,7 +348,6 @@ class SettingsScene(Scene, UINavigationMixin):
 
 class PauseMenu(Scene, UINavigationMixin):
     def __init__(self, director):
-        print("PAUSE MENU")
         Scene.__init__(self, director)
         self.screen = director.screen
         self.director = director
@@ -449,7 +445,6 @@ class PauseMenu(Scene, UINavigationMixin):
 class MenuScene(Scene,UINavigationMixin):
     def __init__(self, director):
         Scene.__init__(self,director)
-        print("MENU SCENE")
         self.director = director
         self.resources = ResourceManager()
         self.font = pygame.font.Font(None, 36)
