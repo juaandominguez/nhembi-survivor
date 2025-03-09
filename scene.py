@@ -12,10 +12,10 @@ class Scene:
         self.director = director
 
     def update(self, *args):
-        raise NotImplemented("Tiene que implementar el metodo update.")
+        raise NotImplementedError("Tiene que implementar el metodo update.")
 
-    def eventos(self, *args):
-        raise NotImplemented("Tiene que implementar el metodo eventos.")
+    def handle_events(self, *args):
+        raise NotImplementedError("Tiene que implementar el metodo eventos.")
 
-    def render(self, pantalla):
-        raise NotImplemented("Tiene que implementar el metodo dibujar.")
+    def render(self, screen):
+        raise NotImplementedError("Tiene que implementar el metodo dibujar.")
