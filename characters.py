@@ -91,7 +91,6 @@ class Character(MySprite):
                                             ResourceManager.loadCoordinates(imagePrefix + '/' + action.prefix + '.txt'))
             self.coordinates = self.spriteCharacter[action.prefix].coords
             data = self.coordinates.split()
-            print(f"Data for action {action.prefix}: {len(data)} {len(action.numImages)}") 
             self.coordinatesFile.append([])
             for line in range(0, len(action.numImages)):
                 self.coordinatesFile.append([])
@@ -107,8 +106,6 @@ class Character(MySprite):
 
         # Initial posture of the sprite
         self.numPosture = IDLE
-
-        print(f"Coordinates: {self.coordinatesFile}")
 
         # Rect of the sprite
         self.rect = pygame.Rect(0, 0, self.coordinatesFile[self.numPosture][0][0], self.coordinatesFile[self.numPosture][0][0])
@@ -135,7 +132,6 @@ class Character(MySprite):
             if self.numPosture >= len(self.coordinatesFile[self.movement]):
                 self.numPosture = 0
 
-        print(f"{self.coordinatesFile[self.movement][self.numPosture]}")
         
         self.image = self.spriteCharacter[action].image.subsurface(self.coordinatesFile[self.movement][self.numPosture])
 
@@ -190,32 +186,68 @@ class Player(Character):
 
     def move(self, teclasPulsadas, arriba, abajo, izquierda, derecha):
         if teclasPulsadas[arriba]:
-            Player.move(self,UP)
+            Character.move(self,UP)
         elif teclasPulsadas[izquierda]:
-            Player.move(self,LEFT)
+            Character.move(self,LEFT)
         elif teclasPulsadas[derecha]:
-            Player.move(self,RIGHT)
+            Character.move(self,RIGHT)
         else:
-            Player.move(self,IDLE)
+            Character.move(self,IDLE)
+
 
 
 # -------------------------------------------------
 # Clase NoJugador
 
-class NoJugador(Character):
+class Enemy(Character):
     "El resto de personajes no jugadores"
-    def __init__(self, archivoImagen, archivoCoordenadas, numImagenes, velocidad, velocidadSalto, retardoAnimacion):
+    def __init__(self, imagePrefix, speedMovement, animationDelay):
         # Primero invocamos al constructor de la clase padre con los parametros pasados
-        Character.__init__(self, archivoImagen, archivoCoordenadas, numImagenes, velocidad, velocidadSalto, retardoAnimacion);
+        Character.__init__(self, imagePrefix, speedMovement, animationDelay);
 
     # Aqui vendria la implementacion de la IA segun las posiciones de los jugadores
     # La implementacion por defecto, este metodo deberia de ser implementado en las clases inferiores
     #  mostrando la personalidad de cada enemigo
-    def mover_cpu(self, jugador1, jugador2):
+    def move_cpu(self, jugador1):
         # Por defecto un enemigo no hace nada
         #  (se podria programar, por ejemplo, que disparase al jugador por defecto)
         return
 
+
+class Rat(Enemy):
+    "Ratilla"
+    def __init__(self):
+        # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
+        Character.__init__(self,'enemies/enemy_rat', SPEED_MULTIPLIER, ANIMATION_PLAYER_DELAY);
+
+
+    def move_cpu(self, player):
+        """
+        Mueve la rata hacia el jugador con su velocidad configurada.
+        """
+        # Calcular la dirección hacia el jugador
+        dx, dy = player.position[0] - self.position[0], player.position[1] - self.position[1]
+        distance = max(1, (dx ** 2 + dy ** 2) ** 0.5)
+        
+        # Si el jugador está muy cerca, no moverse (opcional)
+        min_distance = 20  # Distancia mínima para mantener
+        if distance < min_distance:
+            Character.move(self, IDLE)
+            return
+            
+        # Determinar la dirección principal del movimiento
+        if abs(dx) > abs(dy):
+            # Movimiento horizontal predominante
+            if dx > 0:
+                Character.move(self, RIGHT)
+            else:
+                Character.move(self, LEFT)
+        else:
+            # Movimiento vertical predominante
+            if dy > 0:
+                Character.move(self, DOWN)
+            else:
+                Character.move(self, UP)
 # -------------------------------------------------
 # Clase Sniper
 """ 

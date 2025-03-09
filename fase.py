@@ -38,7 +38,7 @@ class Fase(Scene):
         self.jugador.setPosition((200, 200))
 
         # Y los enemigos que tendran en este decorado
-        enemy1 = Player()
+        enemy1 = Rat()
         enemy1.setPosition((1000, 418))
 
         # Creamos un grupo con los enemigos
@@ -184,9 +184,7 @@ class Fase(Scene):
         self.grupoSprites.draw(pantalla)
 
 
-    def eventos(self, event):
-        if event.type == pygame.QUIT:
-             self.director.salirPrograma()
+    def handle_events(self, event):
 
         # Indicamos la acción a realizar segun la tecla pulsada para cada jugador
         teclasPulsadas = pygame.key.get_pressed()
