@@ -179,17 +179,14 @@ class Fase(Scene):
         #  la posicion del sol y el color del cielo
 
         
-    def dibujar(self, pantalla):
+    def render(self, pantalla):
         # Luego los Sprites
         self.grupoSprites.draw(pantalla)
 
 
-    def eventos(self, lista_eventos):
-        # Miramos a ver si hay algun evento de salir del programa
-        for evento in lista_eventos:
-            # Si se quiere salir, se le indica al director
-            if evento.type == pygame.QUIT:
-                self.director.salirPrograma()
+    def eventos(self, event):
+        if event.type == pygame.QUIT:
+             self.director.salirPrograma()
 
         # Indicamos la acción a realizar segun la tecla pulsada para cada jugador
         teclasPulsadas = pygame.key.get_pressed()

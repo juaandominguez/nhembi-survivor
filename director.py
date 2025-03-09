@@ -49,7 +49,7 @@ class Director:
                 if event.type == pygame.QUIT:
                     self.quit_game()
                     return
-                scene.handle_event(event)
+                scene.eventos(event)
 
             # Update and render
             scene.update(delta_time)
