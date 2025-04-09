@@ -1,0 +1,112 @@
+{
+  "colors": {
+    "name": "Liberated Palette",
+    "authors": [
+      "Eliza Wyatt (DeathsDarling)"
+    ],
+    "urls": [
+      "https://github.com/ElizaWy/LPC/wiki/Style-Guide#color-palette"
+    ],
+    "licenses": [
+      "OGA-BY 3.0"
+    ],
+    "notes": [
+      "Original palette made for the LPC set, by Eliza Wyatt."
+    ]
+  },
+  "anatomy.body.pregnant": {
+    "notes": [
+      "see details at https://opengameart.org/content/lpc-character-bases",
+      "2023-12 [napsio]: minimized colors to 6 for each material and fixed broken colors"
+    ],
+    "authors": [
+      "napsio",
+      "bluecarrot16",
+      "Evert",
+      "TheraHedwig",
+      "MuffinElZangano",
+      "Durrani",
+      "Benjamin K. Smith (BenCreating)",
+      "Pierre Vigier (pvigier)",
+      "Eliza Wyatt (ElizaWy)",
+      "Matthew Krohn (makrohn)",
+      "Johannes Sjölund (wulax)",
+      "Stephen Challener (Redshrike)"
+    ],
+    "licenses": [
+      "CC-BY-SA 3.0",
+      "GPL 3.0"
+    ],
+    "urls": [
+      "https://opengameart.org/content/lpc-jump-expanded",
+      "https://opengameart.org/content/lpc-revised-character-basics",
+      "https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles",
+      "https://opengameart.org/content/lpc-ladies",
+      "https://opengameart.org/content/lpc-be-seated",
+      "https://opengameart.org/content/lpc-runcycle-for-male-muscular-and-pregnant-character-bases-with-modular-heads",
+      "https://opengameart.org/content/lpc-medieval-fantasy-character-sprites",
+      "https://opengameart.org/content/lpc-pregnancy-bases-maternity-wear",
+      "https://opengameart.org/content/lpc-character-bases",
+      "https://gitlab.com/vagabondgame/lpc-characters",
+      "https://opengameart.org/content/lpc-male-jumping-animation-by-durrani",
+      "https://opengameart.org/content/lpc-7-womens-shirts",
+      "https://opengameart.org/content/lpc-runcycle-and-diagonal-walkcycle"
+    ],
+    "name": "Pregnant"
+  },
+  "anatomy.head.jack": {
+    "notes": [
+      "original pumpkin by Joshua Taylor",
+      "modified to head by bluecarrot16",
+      "2023-12 [napsio]: minimized colors to 6 for each material and fixed broken colors"
+    ],
+    "authors": [
+      "napsio",
+      "bluecarrot16",
+      "Joshua Taylor"
+    ],
+    "licenses": [
+      "CC-BY-SA 3.0",
+      "GPL 3.0"
+    ],
+    "urls": [
+      "https://opengameart.org/content/fruit-and-veggie-inventory",
+      "https://opengameart.org/content/lpc-folk"
+    ],
+    "name": "Jack"
+  },
+  "equipment.bows.great": {
+    "notes": [
+      "2023-12 [napsio]: minimized colors to 6 for each material and fixed broken colors"
+    ],
+    "authors": [
+      "napsio",
+      "Daniel Eddeland (daneeklu)",
+      "gr3yh47",
+      "Johannes Sjölund (wulax)",
+      "pvigier"
+    ],
+    "licenses": [
+      "CC-BY-SA 3.0"
+    ],
+    "urls": [
+      "https://opengameart.org/content/lpc-weapons-two-bows-a-spear-and-a-trident",
+      "https://opengameart.org/content/lpc-walk-animations-for-bows"
+    ],
+    "name": "Great"
+  },
+  "equipment.bow_accessory.arrow": {
+    "notes": [],
+    "authors": [
+      "Johannes Sjölund (wulax)"
+    ],
+    "licenses": [
+      "CC-BY-SA 3.0",
+      "GPL 3.0"
+    ],
+    "urls": [
+      "https://opengameart.org/content/lpc-medieval-fantasy-character-sprites"
+    ],
+    "name": "Arrow"
+  }
+}

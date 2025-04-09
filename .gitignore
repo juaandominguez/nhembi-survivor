@@ -1,0 +1,31 @@
+# Ignorar archivos de caché de Python
+__pycache__/
+*.py[cod]
+*.so
+
+# Ignorar archivos de entorno virtual
+venv/
+env/
+*.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Ignorar configuraciones del editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignorar archivos de compilación
+build/
+dist/
+*.egg-info/
+
+# Ignorar archivos de logs y bases de datos temporales
+*.log
+*.sqlite3
+
+# Ignorar archivos de LDtk innecesarios (si usas archivos de backup)
+*.ldtk-backup
+
+Escenas/__pycache__/*

@@ -1,0 +1,115 @@
+{
+  "colors": {
+    "name": "Liberated Palette",
+    "authors": [
+      "Eliza Wyatt (DeathsDarling)"
+    ],
+    "urls": [
+      "https://github.com/ElizaWy/LPC/wiki/Style-Guide#color-palette"
+    ],
+    "licenses": [
+      "OGA-BY 3.0"
+    ],
+    "notes": [
+      "Original palette made for the LPC set, by Eliza Wyatt."
+    ]
+  },
+  "anatomy.body.muscular": {
+    "notes": [
+      "see details at https://opengameart.org/content/lpc-character-bases",
+      "2023-12 [napsio]: minimized colors to 6 for each material and fixed broken colors"
+    ],
+    "authors": [
+      "napsio",
+      "bluecarrot16",
+      "Evert",
+      "TheraHedwig",
+      "MuffinElZangano",
+      "Durrani",
+      "Sander Frenken (castelonia)",
+      "Benjamin K. Smith (BenCreating)",
+      "Eliza Wyatt (ElizaWy)",
+      "dalonedrau",
+      "Stephen Challener (Redshrike)"
+    ],
+    "licenses": [
+      "CC-BY-SA 3.0"
+    ],
+    "urls": [
+      "https://opengameart.org/content/lpc-jump-expanded",
+      "https://opengameart.org/content/lpc-muscular-hurt-animation",
+      "https://opengameart.org/content/lpc-revised-character-basics",
+      "https://opengameart.org/content/lpc-barbarian-sprite-base",
+      "https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles",
+      "https://opengameart.org/content/lpc-be-seated",
+      "https://opengameart.org/content/lpc-muscular-swing-animation",
+      "https://opengameart.org/content/lpc-runcycle-for-male-muscular-and-pregnant-character-bases-with-modular-heads",
+      "https://opengameart.org/content/lpc-character-bases",
+      "https://opengameart.org/content/lpc-male-jumping-animation-by-durrani",
+      "https://opengameart.org/content/lpc-runcycle-and-diagonal-walkcycle"
+    ],
+    "name": "Muskular"
+  },
+  "anatomy.head.lizard_male": {
+    "notes": [
+      "original lizard/drake by Nila122",
+      "reworked by BenCreating",
+      "modular head and further revisions by bluecarrot16. Nila122 gave blanket permission to MedicineStorm to use Nila122's LPC assets under OGA-BY 3.0 (where original or derived only from other works under OGA-BY).",
+      "2023-12 [napsio]: minimized colors to 6 for each material and fixed broken colors"
+    ],
+    "authors": [
+      "napsio",
+      "bluecarrot16",
+      "Benjamin K. Smith (BenCreating)",
+      "Nila122"
+    ],
+    "licenses": [
+      "OGA-BY 3.0",
+      "CC-BY-SA 3.0",
+      "GPL 3.0"
+    ],
+    "urls": [
+      "https://opengameart.org/content/lpc-character-bases",
+      "https://opengameart.org/content/drakes-and-lizardfolk"
+    ],
+    "name": "Lizard Male"
+  },
+  "anatomy.tail.lizard": {
+    "notes": [
+      "edited for v3 bases and recolored by bluecarrot16",
+      "2023-12 [napsio]: minimized colors to 6 for each material and fixed broken colors"
+    ],
+    "authors": [
+      "napsio",
+      "Nila122",
+      "bluecarrot16"
+    ],
+    "licenses": [
+      "CC-BY-SA 3.0",
+      "GPL 3.0"
+    ],
+    "urls": [
+      "https://opengameart.org/content/drakes-and-lizardfolk"
+    ],
+    "name": "Lizard Tail"
+  },
+  "anatomy.wings.lizard": {
+    "notes": [
+      "edited for v3 bases and recolored by bluecarrot16",
+      "2023-12 [napsio]: minimized colors to 6 for each material and fixed broken colors"
+    ],
+    "authors": [
+      "napsio",
+      "Nila122",
+      "bluecarrot16"
+    ],
+    "licenses": [
+      "CC-BY-SA 3.0",
+      "GPL 3.0"
+    ],
+    "urls": [
+      "https://opengameart.org/content/drakes-and-lizardfolk"
+    ],
+    "name": "Lizard Wings"
+  }
+}
